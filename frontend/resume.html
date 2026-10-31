@@ -230,7 +230,7 @@
 <script>
 "use strict";
 
-const API_URL = "http://localhost:5000";
+const API_URL = "https://skillforge-api-45.onrender.com";
 
 const fields = [
     "fullName", "email", "phone", "career",
@@ -526,7 +526,7 @@ async function analyzeResume() {
 
         if (error instanceof TypeError) {
             errorBox.textContent =
-                "Could not connect to the backend. Check that SkillForge AI server is running at http://localhost:5000.";
+                "Could not connect to the backend. Check that SkillForge AI server is running at https://skillforge-api-45.onrender.com.";
         } else {
             errorBox.textContent = `AI analysis failed: ${error.message}`;
         }

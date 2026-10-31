@@ -63,7 +63,7 @@ function initBuildAgent() {
         console.warn("Portfolio Studio: buildAgentTasks element is missing.");
     }
 
-    const API_URL = "http://localhost:5000/api/build-agent/projects";
+    const API_URL = "https://skillforge-api-45.onrender.com/api/build-agent/projects";
 
     let currentProject = null;
     let isGenerating = false;

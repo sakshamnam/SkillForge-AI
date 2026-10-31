@@ -76,7 +76,7 @@ function initAIAssistant() {
             console.log("[Career AI] Sending question to backend");
 
             const response = await fetch(
-                "http://localhost:5000/api/ai-assistant",
+                "https://skillforge-api-45.onrender.com/api/ai-assistant",
                 {
                     method: "POST",
                     headers: {
@@ -160,7 +160,7 @@ if (analyzeButton) {
         try {
 
             const response = await fetch(
-                "http://localhost:5000/api/analyze-skills",
+                "https://skillforge-api-45.onrender.com/api/analyze-skills",
                 {
                     method: "POST",
 
@@ -324,7 +324,7 @@ async function generatePersonalizedRoadmap(missingSkills, careerGoal) {
     try {
 
         const response = await fetch(
-            "http://localhost:5000/api/learning-roadmap",
+            "https://skillforge-api-45.onrender.com/api/learning-roadmap",
             {
                 method: "POST",
 
@@ -395,7 +395,7 @@ async function generatePersonalizedRoadmap(missingSkills, careerGoal) {
 // ================= ROADMAP PROGRESS TRACKING =================
 // ================= ROADMAP PROGRESS - MONGODB =================
 
-const ROADMAP_API_URL = "http://localhost:5000";
+const ROADMAP_API_URL = "https://skillforge-api-45.onrender.com";
 
 function getRoadmapUser() {
     try {
@@ -661,7 +661,7 @@ async function loadCareerProfile() {
         }
 
         const response = await fetch(
-            "http://localhost:5000/api/career-profile",
+            "https://skillforge-api-45.onrender.com/api/career-profile",
             {
                 method: "POST",
                 headers,
@@ -865,7 +865,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    const API_URL = "http://localhost:5000";
+    const API_URL = "https://skillforge-api-45.onrender.com";
 
     const savedUser = localStorage.getItem("skillforgeUser");
 
@@ -1493,7 +1493,7 @@ function updateDashboardStats() {
 /* ================= MY PROFILE ================= */
 
 document.addEventListener("DOMContentLoaded", () => {
-    const API_URL = "http://localhost:5000";
+    const API_URL = "https://skillforge-api-45.onrender.com";
 
     const getSavedUser = () => {
         try {
@@ -2103,7 +2103,7 @@ saveButton.addEventListener("click", async () => {
                 formData.append("photo", blob, "profile-photo.jpg");
 
                 const response = await fetch(
-                    `http://localhost:5000/api/users/${userId}/profile/photo`,
+                    `https://skillforge-api-45.onrender.com/api/users/${userId}/profile/photo`,
                     {
                         method: "POST",
                         headers: {
@@ -2187,7 +2187,7 @@ deletePhotoButton.addEventListener("click", async () => {
 
     try {
         const response = await fetch(
-            `http://localhost:5000/api/users/${userId}/profile/photo`,
+            `https://skillforge-api-45.onrender.com/api/users/${userId}/profile/photo`,
             {
                 method: "DELETE",
                 headers: {
@@ -2288,7 +2288,7 @@ deletePhotoButton.addEventListener("click", async () => {
  // ================= PERSONALIZED OPPORTUNITIES =================
 
 document.addEventListener("DOMContentLoaded", () => {
-    const API_URL = "http://localhost:5000";
+    const API_URL = "https://skillforge-api-45.onrender.com";
 
     let user = {};
 
@@ -2385,7 +2385,7 @@ document.addEventListener("DOMContentLoaded", () => {
  // ================= APPLICATION TRACKER =================
 
 document.addEventListener("DOMContentLoaded", () => {
-    const API_URL = "http://localhost:5000";
+    const API_URL = "https://skillforge-api-45.onrender.com";
 
     const form = document.getElementById("applicationForm");
     const list = document.getElementById("applicationList");
@@ -2810,7 +2810,7 @@ if (rejectedStat) {
     // Prevent errors if this section is not present on another page.
     if (!form || !workspace || !message || !historyContainer) return;
 
-    const API = "http://localhost:5000/api/mock-interviews";
+    const API = "https://skillforge-api-45.onrender.com/api/mock-interviews";
 
     let currentInterview = null;
     let currentIndex = 0;
@@ -3326,7 +3326,7 @@ if (rejectedStat) {
 ========================================== */
 
 (() => {
-    const API_URL = "http://localhost:5000";
+    const API_URL = "https://skillforge-api-45.onrender.com";
     const list = document.querySelector("#opportunitiesSection .opportunity-list");
 
     if (!list) return;
@@ -3488,7 +3488,7 @@ if (rejectedStat) {
 ========================================== */
 
 (() => {
-    const API_URL = "http://localhost:5000";
+    const API_URL = "https://skillforge-api-45.onrender.com";
     const list = document.querySelector(
         "#opportunitiesSection .opportunity-list"
     );

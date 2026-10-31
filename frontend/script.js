@@ -2,7 +2,7 @@
 // SkillForge AI - Main Frontend Script
 // ==========================================
 
-const API_URL = "http://localhost:5000";
+const API_URL = "https://skillforge-api-45.onrender.com";
 
 // ---------- Shared Helpers ----------
 

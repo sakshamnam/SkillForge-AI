@@ -1202,7 +1202,7 @@ document.getElementById("completeLessonBtn").addEventListener("click", async () 
 
     try {
         const response = await fetch(
-            `http://localhost:5000/api/users/${encodeURIComponent(userId)}/learning-progress`,
+            `https://skillforge-api-45.onrender.com/api/users/${encodeURIComponent(userId)}/learning-progress`,
             {
                 method: "PUT",
                 headers: {
