@@ -3394,13 +3394,63 @@ IMPORTANT RULES:
                     throw new Error("Gemini client is unavailable.");
                 }
 
-                const result = await ai.models.generateContent({
-                    model: "gemini-3.6-flash",
-                    contents: prompt
-                });
+               let result;
+let lastError;
 
-                generatedCode = result.text || "";
+for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+        console.log(
+            `[Portfolio AI] Gemini attempt ${attempt}/3`
+        );
 
+        result = await ai.models.generateContent({
+            model: "gemini-3.6-flash",
+            contents: prompt
+        });
+
+        break;
+
+    } catch (error) {
+        lastError = error;
+
+        const errorText = String(
+            error?.message || error
+        );
+
+        const status = Number(
+            error?.status || error?.statusCode || 0
+        );
+
+        const temporaryError =
+            status === 503 ||
+            status === 500 ||
+            status === 504 ||
+            /UNAVAILABLE|high demand|overloaded|temporarily unavailable/i
+                .test(errorText);
+
+        if (!temporaryError || attempt === 3) {
+            throw error;
+        }
+
+        const delay = attempt * 3000;
+
+        console.warn(
+            `[Portfolio AI] Gemini busy. Retrying in ${delay / 1000} seconds...`
+        );
+
+        await new Promise(resolve =>
+            setTimeout(resolve, delay)
+        );
+    }
+}
+
+if (!result) {
+    throw lastError || new Error(
+        "Gemini returned no response."
+    );
+}
+
+generatedCode = result.text || "";
                 if (!generatedCode.trim()) {
                     throw new Error("Gemini returned an empty response.");
                 }
