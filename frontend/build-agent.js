@@ -177,12 +177,11 @@ function initBuildAgent() {
         statusBox.appendChild(document.createElement("br"));
         statusBox.appendChild(retryButton);
     }
-
-    function isTemporaryGeminiError(error) {
-        return /Gemini is temporarily busy|Gemini API rate limit/i.test(
-            error?.message || ""
-        );
-    }
+function isTemporaryGeminiError(error) {
+    return /Gemini is temporarily busy/i.test(
+        error?.message || ""
+    );
+}
 
     // ==========================================
     // 5. PORTFOLIO DATA

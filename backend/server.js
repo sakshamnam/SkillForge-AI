@@ -172,6 +172,7 @@ function authenticateToken(req, res, next) {
 // ================= EXPRESS APP =================
 
 const app = express();
+app.set("trust proxy", 1);
 // ================= GLOBAL MIDDLEWARE =================
 
 app.use(cors());
@@ -3473,13 +3474,27 @@ generatedCode = result.text || "";
                     "Gemini portfolio generation failed:",
                     aiError.message
                 );
+const errorText = String(aiError?.message || aiError);
 
-                return res.status(503).json({
-                    success: false,
-                    usedFallback: false,
-                    message:
-                        "AI generation is currently unavailable. Gemini quota may be exhausted or the AI service may be unavailable. Please try again later."
-                });
+const errorStatus = Number(
+    aiError?.status ||
+    aiError?.statusCode ||
+    aiError?.response?.status ||
+    0
+);
+
+const isQuotaError =
+    errorStatus === 429 ||
+    /RESOURCE_EXHAUSTED|quota exceeded|rate limit|too many requests/i
+        .test(errorText);
+
+return res.status(isQuotaError ? 429 : 503).json({
+    success: false,
+    usedFallback: false,
+    message: isQuotaError
+        ? "Gemini API quota reached. Please try again after your quota resets."
+        : "Gemini is temporarily unavailable. Please try again shortly."
+});
             }
             
 if (generatedCode.length > 100000) {
