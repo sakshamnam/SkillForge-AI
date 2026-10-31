@@ -1772,9 +1772,7 @@ Instructions:
                 );
 
                 response = await ai.models.generateContent({
-                    model: attempt === 3
-    ? "gemini-3.6-flash"
-    : "gemini-3.8-flash",
+             model: "gemini-3.6-flash",
                     contents: prompt,
                     config: {
                         temperature: 0.5,
