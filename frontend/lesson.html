@@ -1,0 +1,1238 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillForge-AI | Learning Lesson</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #100d20;
+            color: #f5f3ff;
+            line-height: 1.7;
+        }
+        main {
+            max-width: 850px;
+            margin: 40px auto;
+            padding: 24px;
+        }
+        .lesson-card {
+            background: #1d1833;
+            border: 1px solid #393052;
+            border-radius: 16px;
+            padding: 24px;
+            margin: 20px 0;
+        }
+        h1, h2 { color: #c4b5fd; }
+        code {
+            background: #0d0a18;
+            padding: 3px 6px;
+            border-radius: 5px;
+        }
+        pre {
+            background: #0d0a18;
+            padding: 16px;
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+        button {
+            border: 0;
+            border-radius: 8px;
+            padding: 12px 18px;
+            background: #8b5cf6;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        a { color: #c4b5fd; }
+        #message { margin-top: 12px; }
+    </style>
+</head>
+<body>
+<main>
+    <a href="dashboard.html">← Back to Dashboard</a>
+
+    <h1 id="lessonTitle">Loading lesson...</h1>
+    <p>SkillForge-AI Learning Center</p>
+
+    <section class="lesson-card">
+        <h2>What will you learn?</h2>
+        <p id="lessonIntro"></p>
+    </section>
+
+    <section class="lesson-card">
+        <h2>Lesson</h2>
+        <div id="lessonContent"></div>
+    </section>
+
+    <section class="lesson-card">
+        <h2>Quick Practice</h2>
+        <p id="quizQuestion"></p>
+        <div id="quizOptions"></div>
+        <p id="quizFeedback" role="status"></p>
+        <button id="checkAnswerBtn">Check Answer</button>
+    </section>
+
+    <section class="lesson-card">
+        <h2>Lesson Progress</h2>
+        <p id="progressMessage">Complete the practice question to continue.</p>
+        <button id="completeLessonBtn" disabled>Mark as Completed</button>
+        <p id="message" role="status"></p>
+    </section>
+</main>
+
+<script>
+    
+const lessons = {
+    "HTML": {
+        title: "HTML Fundamentals",
+        intro: "Build the structure of web pages using HTML elements, attributes and semantic tags.",
+        content: `
+            <h3>1. What is HTML?</h3>
+            <p>HTML stands for HyperText Markup Language. It defines the structure of a webpage.</p>
+            <h3>2. Basic page structure</h3>
+            <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;title&gt;My Website&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Welcome&lt;/h1&gt;
+  &lt;p&gt;My first webpage.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            <h3>3. Important elements</h3>
+            <ul>
+              <li><code>&lt;h1&gt;</code> to <code>&lt;h6&gt;</code>: headings.</li>
+              <li><code>&lt;p&gt;</code>: paragraph.</li>
+              <li><code>&lt;a href="..."&gt;</code>: link.</li>
+              <li><code>&lt;img src="..." alt="..."&gt;</code>: image.</li>
+              <li><code>&lt;form&gt;</code> and <code>&lt;input&gt;</code>: user input.</li>
+              <li><code>&lt;header&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;footer&gt;</code>: semantic structure.</li>
+            </ul>
+            <h3>4. Practice</h3>
+            <p>Create a page with a heading, paragraph, image and link. Remember to provide useful alt text for images.</p>
+        `,
+        question: "Which HTML element creates a paragraph?",
+        options: ["<heading>", "<p>", "<paragraph>"],
+        answer: 1
+    },
+
+    "CSS": {
+        title: "CSS Fundamentals",
+        intro: "Style webpages using selectors, colors, spacing, Flexbox, Grid and responsive design.",
+        content: `
+            <h3>1. What is CSS?</h3>
+            <p>CSS means Cascading Style Sheets. It controls how HTML elements look.</p>
+            <h3>2. CSS example</h3>
+            <pre><code>h1 {
+  color: purple;
+  font-size: 32px;
+}
+
+.card {
+  padding: 20px;
+  border-radius: 12px;
+}</code></pre>
+            <h3>3. Selectors</h3>
+            <ul>
+              <li><code>p</code>: selects paragraph elements.</li>
+              <li><code>.card</code>: selects elements with class card.</li>
+              <li><code>#header</code>: selects the element with ID header.</li>
+            </ul>
+            <h3>4. Layout</h3>
+            <p>Use Flexbox for arranging items in a row or column. Use CSS Grid for two-dimensional layouts.</p>
+            <pre><code>.container {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}</code></pre>
+            <p>Use media queries to make layouts responsive on mobile screens.</p>
+            <h3>Practice</h3>
+            <p>Build a profile card with a background, padding, rounded corners and a button.</p>
+        `,
+        question: "Which CSS property changes text color?",
+        options: ["font-style", "background", "color"],
+        answer: 2
+    },
+
+    "JavaScript": {
+        title: "JavaScript Fundamentals",
+        intro: "Learn variables, functions, conditions, arrays, objects, DOM manipulation and events.",
+        content: `
+            <h3>1. Variables and data</h3>
+            <pre><code>let score = 10;
+const student = "Aman";
+score = score + 5;</code></pre>
+            <p>Use <code>const</code> by default and <code>let</code> when reassignment is required.</p>
+            <h3>2. Conditions and functions</h3>
+            <pre><code>function checkScore(score) {
+  if (score >= 40) {
+    return "Pass";
+  }
+  return "Try again";
+}
+
+console.log(checkScore(75));</code></pre>
+            <h3>3. Arrays</h3>
+            <pre><code>const skills = ["HTML", "CSS", "JavaScript"];
+skills.push("React");</code></pre>
+            <h3>4. DOM and events</h3>
+            <pre><code>const button = document.querySelector("button");
+
+button.addEventListener("click", () => {
+  document.querySelector("h1").textContent = "Hello!";
+});</code></pre>
+            <p>The DOM lets JavaScript read and update webpage elements.</p>
+            <h3>Practice</h3>
+            <p>Create a counter with Increase and Decrease buttons. Display the current count on the page.</p>
+        `,
+        question: "Which keyword declares a block-scoped variable that can be reassigned?",
+        options: ["let", "const", "heading"],
+        answer: 0
+    },
+
+    "JavaScript Basics": {
+        title: "JavaScript Basics",
+        intro: "Start programming webpages with JavaScript variables, functions and events.",
+        content: `
+            <h3>Variables</h3>
+            <pre><code>let age = 18;
+const name = "Riya";</code></pre>
+            <h3>Conditions</h3>
+            <pre><code>if (age >= 18) {
+  console.log("Adult");
+} else {
+  console.log("Under 18");
+}</code></pre>
+            <h3>Functions</h3>
+            <pre><code>function add(a, b) {
+  return a + b;
+}
+console.log(add(2, 3));</code></pre>
+            <p>Practice by writing a function that calculates the total price of two items.</p>
+        `,
+        question: "What does a function's return statement do?",
+        options: ["Returns a value to the caller", "Creates a webpage", "Styles an element"],
+        answer: 0
+    },
+
+    "React.js": {
+        title: "React.js Fundamentals",
+        intro: "Build reusable user interfaces using components, JSX, props and state.",
+        content: `
+            <h3>1. What is React?</h3>
+            <p>React is a JavaScript library for building user interfaces from reusable components.</p>
+            <h3>2. A component</h3>
+            <pre><code>function Welcome() {
+  return &lt;h1&gt;Welcome to React!&lt;/h1&gt;;
+}
+
+export default Welcome;</code></pre>
+            <h3>3. Props</h3>
+            <pre><code>function Greeting({ name }) {
+  return &lt;p&gt;Hello, {name}!&lt;/p&gt;;
+}</code></pre>
+            <p>Props pass information from a parent component to a child component.</p>
+            <h3>4. State</h3>
+            <pre><code>import { useState } from "react";
+
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    &lt;button onClick={() =&gt; setCount(count + 1)}&gt;
+      Count: {count}
+    &lt;/button&gt;
+  );
+}</code></pre>
+            <p>State stores information that can change and trigger a re-render.</p>
+            <h3>Practice</h3>
+            <p>Create a reusable profile card component that accepts a name and role as props.</p>
+        `,
+        question: "Which React hook is commonly used to manage component state?",
+        options: ["useState", "useHTML", "useStyle"],
+        answer: 0
+    },
+
+    "React": {
+        title: "React.js Fundamentals",
+        intro: "Learn React components, props, state and event handling.",
+        content: `
+            <h3>Components</h3>
+            <pre><code>function Welcome() {
+  return &lt;h1&gt;Hello React&lt;/h1&gt;;
+}</code></pre>
+            <h3>State</h3>
+            <pre><code>const [count, setCount] = useState(0);</code></pre>
+            <p>Components split a user interface into reusable parts. Props pass data, while state stores changing data.</p>
+            <p>Practice by building a counter and a list of skills.</p>
+        `,
+        question: "What is the main purpose of React components?",
+        options: ["Create reusable UI parts", "Store SQL tables", "Compile CSS into HTML"],
+        answer: 0
+    },
+
+    "Node.js": {
+        title: "Node.js and APIs",
+        intro: "Run JavaScript on the server and create backend APIs with Express.",
+        content: `
+            <h3>1. What is Node.js?</h3>
+            <p>Node.js is a JavaScript runtime that runs JavaScript outside the browser.</p>
+            <h3>2. Create a project</h3>
+            <pre><code>npm init -y
+npm install express</code></pre>
+            <h3>3. A basic Express server</h3>
+            <pre><code>const express = require("express");
+const app = express();
+
+app.use(express.json());
+
+app.get("/api/health", (req, res) => {
+  res.json({ success: true });
+});
+
+app.listen(5000, () => {
+  console.log("Server running");
+});</code></pre>
+            <h3>4. HTTP methods</h3>
+            <ul>
+              <li>GET: retrieve data.</li>
+              <li>POST: create or submit data.</li>
+              <li>PUT/PATCH: update data.</li>
+              <li>DELETE: remove data.</li>
+            </ul>
+            <p>Production APIs should validate input, handle errors and protect private routes with authentication.</p>
+            <h3>Practice</h3>
+            <p>Create a GET endpoint that returns a list of three skills as JSON.</p>
+        `,
+        question: "Which HTTP method is commonly used to retrieve data?",
+        options: ["DELETE", "GET", "PATCH"],
+        answer: 1
+    },
+
+    "Node.js & APIs": {
+        title: "Node.js and APIs",
+        intro: "Understand server-side JavaScript, REST endpoints and HTTP methods.",
+        content: `
+            <h3>Express API</h3>
+            <pre><code>const express = require("express");
+const app = express();
+app.use(express.json());
+
+app.get("/api/skills", (req, res) => {
+  res.json(["HTML", "CSS", "JavaScript"]);
+});
+
+app.listen(5000);</code></pre>
+            <p>GET reads data; POST submits data; PUT/PATCH update data; DELETE removes data. Validate request data and protect private routes.</p>
+            <p>Practice by adding a POST endpoint that accepts a skill name.</p>
+        `,
+        question: "What does express.json() do?",
+        options: ["Parses incoming JSON request bodies", "Creates a database", "Styles the response page"],
+        answer: 0
+    },
+
+    "SQL": {
+        title: "SQL and Databases",
+        intro: "Learn relational tables, CRUD operations, filtering, sorting and aggregation.",
+        content: `
+            <h3>1. What is SQL?</h3>
+            <p>SQL stands for Structured Query Language. It is used to work with relational databases.</p>
+            <h3>2. Read data</h3>
+            <pre><code>SELECT name, marks
+FROM students
+WHERE marks >= 60
+ORDER BY marks DESC;</code></pre>
+            <h3>3. Create and update data</h3>
+            <pre><code>INSERT INTO students (name, marks)
+VALUES ('Aman', 85);
+
+UPDATE students
+SET marks = 90
+WHERE name = 'Aman';</code></pre>
+            <h3>4. Aggregation</h3>
+            <pre><code>SELECT COUNT(*) AS total_students,
+       AVG(marks) AS average_marks
+FROM students;</code></pre>
+            <p>Common functions include COUNT, SUM, AVG, MIN and MAX. Use WHERE to filter rows and GROUP BY to group them.</p>
+            <h3>Practice</h3>
+            <p>Write a query to display students who scored more than 80 marks.</p>
+        `,
+        question: "Which SQL command retrieves data from a table?",
+        options: ["SELECT", "INSERT", "DROP"],
+        answer: 0
+    },
+
+    "Python": {
+        title: "Python Fundamentals",
+        intro: "Learn Python variables, collections, conditions, loops and functions.",
+        content: `
+            <h3>1. Variables and types</h3>
+            <pre><code>name = "Aman"
+age = 19
+marks = [80, 75, 90]</code></pre>
+            <p>Python supports strings, integers, floats, booleans and collections such as lists and dictionaries.</p>
+            <h3>2. Loops</h3>
+            <pre><code>for mark in marks:
+    print(mark)</code></pre>
+            <h3>3. Functions</h3>
+            <pre><code>def average(numbers):
+    return sum(numbers) / len(numbers)
+
+print(average([80, 75, 90]))</code></pre>
+            <h3>4. Dictionaries</h3>
+            <pre><code>student = {
+    "name": "Aman",
+    "marks": 85
+}
+print(student["name"])</code></pre>
+            <h3>Practice</h3>
+            <p>Write a function that receives a list of numbers and returns the largest number.</p>
+        `,
+        question: "Which keyword defines a function in Python?",
+        options: ["function", "def", "func"],
+        answer: 1
+    },
+
+    "C++": {
+        title: "C++ Fundamentals",
+        intro: "Learn C++ program structure, data types, conditions, loops, functions and vectors.",
+        content: `
+            <h3>1. A basic program</h3>
+            <pre><code>#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    cout &lt;&lt; "Hello World";
+    return 0;
+}</code></pre>
+            <h3>2. Variables and conditions</h3>
+            <pre><code>int marks = 75;
+
+if (marks >= 40) {
+    cout &lt;&lt; "Pass";
+} else {
+    cout &lt;&lt; "Fail";
+}</code></pre>
+            <h3>3. Loops</h3>
+            <pre><code>for (int i = 1; i &lt;= 5; i++) {
+    cout &lt;&lt; i &lt;&lt; " ";
+}</code></pre>
+            <h3>4. Vectors</h3>
+            <pre><code>#include &lt;vector&gt;
+
+vector&lt;int&gt; numbers = {10, 20, 30};
+numbers.push_back(40);</code></pre>
+            <p>Vectors are dynamic arrays from the C++ Standard Library. Learn functions, references, classes and basic data structures next.</p>
+            <h3>Practice</h3>
+            <p>Write a program that finds the sum of numbers from 1 to 10.</p>
+        `,
+        question: "Which function is the usual entry point of a C++ program?",
+        options: ["start()", "main()", "run()"],
+        answer: 1
+    },
+
+    "Java": {
+        title: "Java Fundamentals",
+        intro: "Understand Java program structure, variables, conditions, loops, methods and classes.",
+        content: `
+            <h3>1. A basic Java program</h3>
+            <pre><code>public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello World");
+    }
+}</code></pre>
+            <h3>2. Variables and conditions</h3>
+            <pre><code>int marks = 75;
+
+if (marks >= 40) {
+    System.out.println("Pass");
+} else {
+    System.out.println("Fail");
+}</code></pre>
+            <h3>3. Methods</h3>
+            <pre><code>static int add(int a, int b) {
+    return a + b;
+}</code></pre>
+            <h3>4. Classes and objects</h3>
+            <pre><code>class Student {
+    String name;
+
+    Student(String name) {
+        this.name = name;
+    }
+}</code></pre>
+            <p>A class defines structure and behavior. An object is an instance of a class.</p>
+            <h3>Practice</h3>
+            <p>Create a Student class with a name and marks field.</p>
+        `,
+        question: "Which keyword is used to create an object in Java?",
+        options: ["new", "make", "object"],
+        answer: 0
+    },
+
+    "Git": {
+        title: "Git Fundamentals",
+        intro: "Track code changes, create commits and collaborate using Git.",
+        content: `
+            <h3>1. What is Git?</h3>
+            <p>Git is a version control system that tracks changes to project files.</p>
+            <h3>2. Common commands</h3>
+            <pre><code>git init
+git status
+git add .
+git commit -m "Add project files"
+git log</code></pre>
+            <h3>3. Git workflow</h3>
+            <ol>
+              <li>Edit project files.</li>
+              <li>Check changes using <code>git status</code>.</li>
+              <li>Stage selected changes using <code>git add</code>.</li>
+              <li>Save a snapshot using <code>git commit</code>.</li>
+            </ol>
+            <h3>4. Branches and GitHub</h3>
+            <pre><code>git switch -c feature-login
+git push -u origin feature-login</code></pre>
+            <p>Git works locally. GitHub hosts repositories online for sharing and collaboration. Pushing requires a configured remote and authentication.</p>
+            <h3>Practice</h3>
+            <p>Create a repository, make a file change, stage it and commit it.</p>
+        `,
+        question: "Which command records staged changes in Git history?",
+        options: ["git status", "git commit", "git open"],
+        answer: 1
+    },
+
+    "Git & GitHub": {
+        title: "Git and GitHub",
+        intro: "Learn version control locally and collaborate through hosted repositories.",
+        content: `
+            <h3>Basic workflow</h3>
+            <pre><code>git init
+git add .
+git commit -m "Initial commit"
+git status</code></pre>
+            <p>Git tracks project history. GitHub hosts remote repositories and supports collaboration.</p>
+            <h3>Branches</h3>
+            <pre><code>git switch -c feature-profile</code></pre>
+            <p>A branch lets you work on a feature separately before merging it.</p>
+            <h3>Remote repository</h3>
+            <pre><code>git remote add origin YOUR_REPOSITORY_URL
+git push -u origin main</code></pre>
+            <p>Replace the placeholder with your actual repository URL. Your local branch may have a different name.</p>
+            <p>Practice by creating a repository, making a commit and pushing it to your own GitHub repository.</p>
+        `,
+        question: "What is the main purpose of Git?",
+        options: ["Track changes to files", "Design webpage layouts", "Store spreadsheet formulas"],
+        answer: 0
+    },
+
+    "Excel": {
+        title: "Microsoft Excel Fundamentals",
+        intro: "Learn worksheets, cells, formulas, common functions, sorting, filtering and charts.",
+        content: `
+            <h3>1. Workbook, worksheet and cells</h3>
+            <p>An Excel workbook contains worksheets. Columns use letters, rows use numbers, and a cell address combines both—for example, A1.</p>
+            <h3>2. Formulas</h3>
+            <p>Excel formulas start with an equals sign.</p>
+            <pre><code>=A1+B1
+=A2*B2
+=SUM(B2:B10)</code></pre>
+            <h3>3. Useful functions</h3>
+            <pre><code>=AVERAGE(B2:B10)
+=MAX(B2:B10)
+=MIN(B2:B10)
+=COUNT(B2:B10)
+=IF(B2>=40,"Pass","Fail")</code></pre>
+            <p>SUM adds values, AVERAGE calculates the mean, and IF returns a result based on a condition.</p>
+            <h3>4. Sorting, filters and charts</h3>
+            <p>Sort to arrange records, apply filters to show selected rows, and use charts to visualize trends. Use a consistent header row for tabular data.</p>
+            <h3>Practice</h3>
+            <p>Enter five student marks in B2:B6. Calculate the total with SUM and average with AVERAGE.</p>
+        `,
+        question: "Which Excel formula adds the values in cells B2 through B10?",
+        options: ["=ADD(B2:B10)", "=SUM(B2:B10)", "=TOTAL(B2:B10)"],
+        answer: 1
+    },
+
+    "Statistics": {
+        title: "Statistics Fundamentals",
+        intro: "Understand descriptive statistics, mean, median, mode, range, variance and standard deviation.",
+        content: `
+            <h3>1. What is statistics?</h3>
+            <p>Statistics is the study of collecting, organizing, analyzing and interpreting data.</p>
+            <h3>2. Mean, median and mode</h3>
+            <p>Consider the data: 2, 3, 3, 7, 10.</p>
+            <ul>
+              <li>Mean = sum of values divided by number of values = 25/5 = 5.</li>
+              <li>Median = middle value after sorting = 3.</li>
+              <li>Mode = most frequent value = 3.</li>
+              <li>Range = maximum minus minimum = 10 - 2 = 8.</li>
+            </ul>
+            <h3>3. Variance and standard deviation</h3>
+            <p>Variance measures spread around the mean. Standard deviation is the square root of variance and is expressed in the same units as the data.</p>
+            <h3>4. Population versus sample</h3>
+            <p>Population formulas use N. Sample variance commonly uses n - 1 in the denominator to estimate population variance.</p>
+            <h3>Practice</h3>
+            <p>For 4, 6, 8, find the mean, median and range. Try calculating these in Excel too.</p>
+        `,
+        question: "What is the median of 2, 4, 7, 9, 12?",
+        options: ["4", "7", "12"],
+        answer: 1
+    },
+
+    "Power BI": {
+        title: "Power BI Fundamentals",
+        intro: "Learn data import, transformation, data modeling, measures and interactive reports.",
+        content: `
+            <h3>1. What is Power BI?</h3>
+            <p>Power BI is a business intelligence tool used to transform data into reports and dashboards.</p>
+            <h3>2. Typical workflow</h3>
+            <ol>
+              <li>Import data from Excel, CSV or a supported database.</li>
+              <li>Clean and transform it using Power Query.</li>
+              <li>Build relationships between tables in the data model.</li>
+              <li>Create visuals and measures.</li>
+              <li>Publish and share reports according to workspace permissions.</li>
+            </ol>
+            <h3>3. Example DAX measure</h3>
+            <pre><code>Total Sales = SUM(Sales[Amount])</code></pre>
+            <p>DAX is the formula language used for measures and calculated columns. Measures calculate results in the current filter context.</p>
+            <h3>4. Visuals and filters</h3>
+            <p>Use bar charts for comparisons, line charts for trends and cards for key metrics. Slicers let report viewers filter data interactively.</p>
+            <h3>Practice</h3>
+            <p>Import a sales spreadsheet and create a chart comparing sales by product.</p>
+        `,
+        question: "Which Power BI feature is primarily used to clean and transform data?",
+        options: ["Power Query", "Paint", "Task Manager"],
+        answer: 0
+    },
+    
+    "MachineLearning": {
+        title: "Machine Learning Fundamentals",
+        intro: "Understand datasets, features, labels, training, testing and model evaluation.",
+        content: `
+            <h3>1. What is Machine Learning?</h3>
+            <p>Machine Learning (ML) enables computers to learn patterns from data and make predictions.</p>
+            <h3>2. Main types</h3>
+            <ul>
+              <li>Supervised learning: learns from labelled examples.</li>
+              <li>Unsupervised learning: discovers patterns in unlabelled data.</li>
+              <li>Reinforcement learning: learns through actions, rewards and feedback.</li>
+            </ul>
+            <h3>3. Typical workflow</h3>
+            <ol>
+              <li>Collect and clean data.</li>
+              <li>Choose features and a target label.</li>
+              <li>Split data into training and test sets.</li>
+              <li>Train the model and evaluate unseen data.</li>
+            </ol>
+            <p>Classification predicts categories; regression predicts numerical values. Watch for overfitting, where a model performs well on training data but poorly on new data.</p>
+            <h3>Practice</h3>
+            <p>For predicting a house price, identify one possible feature and the target.</p>
+        `,
+        question: "Which task predicts a continuous numerical value?",
+        options: ["Classification", "Regression", "Clustering only"],
+        answer: 1
+    },
+
+    "DataStructures": {
+        title: "Data Structures Fundamentals",
+        intro: "Learn arrays, linked lists, stacks, queues, trees, hash tables and graphs.",
+        content: `
+            <h3>1. What is a data structure?</h3>
+            <p>A data structure organizes data so operations such as searching, inserting and deleting can be performed efficiently.</p>
+            <h3>2. Common structures</h3>
+            <ul>
+              <li>Array: indexed elements stored in sequence.</li>
+              <li>Linked list: nodes connected using links.</li>
+              <li>Stack: follows Last In, First Out (LIFO).</li>
+              <li>Queue: follows First In, First Out (FIFO).</li>
+              <li>Hash table: stores key-value associations.</li>
+              <li>Tree: represents hierarchical relationships.</li>
+              <li>Graph: represents vertices and edges.</li>
+            </ul>
+            <h3>3. Stack example in C++</h3>
+            <pre><code>#include &lt;stack&gt;
+using namespace std;
+
+stack&lt;int&gt; s;
+s.push(10);
+s.push(20);
+s.pop();</code></pre>
+            <p>After these operations, the stack contains 10. The pop operation removes the top element.</p>
+            <h3>Practice</h3>
+            <p>Choose a suitable data structure for a queue of people waiting at a ticket counter.</p>
+        `,
+        question: "Which data structure follows FIFO?",
+        options: ["Stack", "Queue", "Binary tree"],
+        answer: 1
+    },
+
+    "TensorFlow": {
+        title: "TensorFlow Fundamentals",
+        intro: "Explore tensors, model layers, compilation, training and prediction.",
+        content: `
+            <h3>1. What is TensorFlow?</h3>
+            <p>TensorFlow is a machine-learning framework used to build and train numerical models and neural networks.</p>
+            <h3>2. Tensors</h3>
+            <p>A tensor is a multidimensional array. Scalars, vectors and matrices are examples of tensors of different ranks.</p>
+            <h3>3. A simple Keras model</h3>
+            <pre><code>import tensorflow as tf
+
+model = tf.keras.Sequential([
+    tf.keras.layers.Input(shape=(3,)),
+    tf.keras.layers.Dense(8, activation="relu"),
+    tf.keras.layers.Dense(1)
+])
+
+model.compile(
+    optimizer="adam",
+    loss="mse"
+)</code></pre>
+            <p>This creates a model with three input features, a hidden dense layer and one output. The model is compiled with an optimizer and loss function.</p>
+            <h3>4. Training</h3>
+            <pre><code>model.fit(
+    x_train,
+    y_train,
+    epochs=10
+)</code></pre>
+            <p>Here, x_train and y_train must contain compatible training data. Training adjusts model parameters to reduce the chosen loss.</p>
+            <h3>Practice</h3>
+            <p>Explain the difference between a model's training data and its test data.</p>
+        `,
+        question: "Which method trains a compiled Keras model?",
+        options: ["model.fit()", "model.paint()", "model.open()"],
+        answer: 0
+    },
+
+    "Networking": {
+        title: "Computer Networking Fundamentals",
+        intro: "Learn IP addresses, DNS, TCP, UDP, HTTP and the OSI model.",
+        content: `
+            <h3>1. What is networking?</h3>
+            <p>A computer network allows devices to exchange data and share resources.</p>
+            <h3>2. Important concepts</h3>
+            <ul>
+              <li>IP address: identifies a network interface.</li>
+              <li>DNS: translates domain names into network records, often IP addresses.</li>
+              <li>Router: forwards packets between networks.</li>
+              <li>Switch: connects devices within a local network.</li>
+              <li>TCP: provides reliable, ordered byte-stream delivery.</li>
+              <li>UDP: sends datagrams without TCP's delivery guarantees.</li>
+            </ul>
+            <h3>3. Common protocols</h3>
+            <ul>
+              <li>HTTP/HTTPS: web communication.</li>
+              <li>DNS: name resolution.</li>
+              <li>DHCP: automatic network configuration.</li>
+              <li>SSH: secure remote terminal access.</li>
+            </ul>
+            <h3>4. OSI model</h3>
+            <p>The seven layers are Physical, Data Link, Network, Transport, Session, Presentation and Application.</p>
+            <h3>Practice</h3>
+            <p>Explain why a browser uses DNS when you enter a website's domain name.</p>
+        `,
+        question: "Which protocol commonly resolves domain names?",
+        options: ["DNS", "FTP", "HDMI"],
+        answer: 0
+    },
+
+    "Linux": {
+        title: "Linux Fundamentals",
+        intro: "Learn the Linux filesystem, navigation, file operations, permissions and processes.",
+        content: `
+            <h3>1. What is Linux?</h3>
+            <p>Linux is an open-source kernel used in many operating systems and servers.</p>
+            <h3>2. Navigation commands</h3>
+            <pre><code>pwd
+ls
+cd Documents</code></pre>
+            <p>pwd shows the current directory, ls lists entries and cd changes directories.</p>
+            <h3>3. Files and directories</h3>
+            <pre><code>mkdir practice
+touch notes.txt
+cp notes.txt backup.txt
+mv backup.txt saved.txt</code></pre>
+            <p>Use commands carefully: paths and permissions determine which files are affected.</p>
+            <h3>4. Permissions and processes</h3>
+            <pre><code>ls -l
+chmod u+x script.sh
+ps</code></pre>
+            <p>Linux permissions control reading, writing and executing. Processes can be inspected with tools such as ps and top.</p>
+            <p>Avoid running unfamiliar commands with elevated privileges; understand what they do first.</p>
+            <h3>Practice</h3>
+            <p>Create a directory, create a text file inside it and list the directory contents.</p>
+        `,
+        question: "Which command prints the current working directory?",
+        options: ["pwd", "cd", "mkdir"],
+        answer: 0
+    },
+
+    "CyberSecurity": {
+        title: "Cybersecurity Fundamentals",
+        intro: "Understand the CIA triad, authentication, secure coding, phishing and defensive practices.",
+        content: `
+            <h3>1. CIA triad</h3>
+            <ul>
+              <li>Confidentiality: information is accessible only to authorized parties.</li>
+              <li>Integrity: information remains accurate and is not changed improperly.</li>
+              <li>Availability: systems and data are accessible when needed.</li>
+            </ul>
+            <h3>2. Common risks</h3>
+            <p>Phishing tricks users into revealing information. Malware can harm systems. Weak passwords and unpatched software increase risk.</p>
+            <h3>3. Defensive habits</h3>
+            <ul>
+              <li>Use unique passwords and multifactor authentication.</li>
+              <li>Install updates and keep backups.</li>
+              <li>Verify links and unexpected requests.</li>
+              <li>Apply least privilege and restrict access.</li>
+              <li>Use parameterized database queries and validate inputs.</li>
+            </ul>
+            <h3>4. Ethical security learning</h3>
+            <p>Practice only on systems you own or have explicit permission to test. Use intentionally vulnerable training labs and focus on fixing vulnerabilities.</p>
+            <h3>Practice</h3>
+            <p>Describe two steps you would take after receiving a suspicious email asking for your password.</p>
+        `,
+        question: "Which part of the CIA triad means data is accurate and protected from unauthorized changes?",
+        options: ["Availability", "Integrity", "Confidentiality"],
+        answer: 1
+    },
+
+    "Cryptography": {
+        title: "Cryptography Fundamentals",
+        intro: "Learn encryption, decryption, hashing, symmetric keys, public-key cryptography and digital signatures.",
+        content: `
+            <h3>1. What is cryptography?</h3>
+            <p>Cryptography uses mathematical techniques to protect information and support secure communication.</p>
+            <h3>2. Encryption types</h3>
+            <ul>
+              <li>Symmetric encryption: the same secret key encrypts and decrypts data.</li>
+              <li>Asymmetric cryptography: uses related public and private keys.</li>
+              <li>Hashing: creates a fixed-length digest; it is not ordinary reversible encryption.</li>
+            </ul>
+            <h3>3. Digital signatures</h3>
+            <p>A signature made with a private key can be verified using the corresponding public key. It helps establish authenticity and integrity.</p>
+            <h3>4. Password storage</h3>
+            <p>Passwords should be stored using a dedicated password-hashing algorithm such as Argon2id, bcrypt or scrypt, with appropriate parameters—not as plaintext or with a fast general-purpose hash alone.</p>
+            <p>Use established cryptographic libraries rather than designing your own encryption algorithm.</p>
+            <h3>Practice</h3>
+            <p>Explain why hashing a password is different from encrypting a message.</p>
+        `,
+        question: "Which statement about a cryptographic hash is correct?",
+        options: ["It is designed to be easily reversed", "It produces a digest and is not ordinary reversible encryption", "It always requires the same secret key as decryption"],
+        answer: 1
+    },
+
+    "Algorithm": {
+        title: "Algorithms Fundamentals",
+        intro: "Learn algorithm design, linear search, binary search, sorting and time complexity.",
+        content: `
+            <h3>1. What is an algorithm?</h3>
+            <p>An algorithm is a finite sequence of steps for solving a problem.</p>
+            <h3>2. Linear search</h3>
+            <pre><code>for (int i = 0; i &lt; n; i++) {
+    if (arr[i] == target) {
+        return i;
+    }
+}
+return -1;</code></pre>
+            <p>Linear search checks elements one by one. Its worst-case time complexity is O(n).</p>
+            <h3>3. Binary search</h3>
+            <p>Binary search repeatedly halves the search interval. It requires sorted data and runs in O(log n) time.</p>
+            <h3>4. Big O notation</h3>
+            <ul>
+              <li>O(1): constant time.</li>
+              <li>O(log n): logarithmic time.</li>
+              <li>O(n): linear time.</li>
+              <li>O(n log n): common efficient comparison-sorting complexity.</li>
+              <li>O(n²): often seen in simple nested-loop algorithms.</li>
+            </ul>
+            <h3>Practice</h3>
+            <p>Which search algorithm would you choose for a sorted array containing millions of values, and why?</p>
+        `,
+        question: "What is the worst-case time complexity of binary search on sorted data?",
+        options: ["O(n²)", "O(log n)", "O(n)"],
+        answer: 1
+    },
+
+    "Algorithms": {
+        title: "Algorithms Fundamentals",
+        intro: "Understand searching, sorting and complexity analysis.",
+        content: `
+            <h3>Searching</h3>
+            <p>Linear search checks each element and takes O(n) time in the worst case.</p>
+            <p>Binary search halves a sorted search range each step and takes O(log n) time.</p>
+            <h3>Sorting</h3>
+            <p>Bubble sort is easy to learn but has O(n²) average and worst-case time. Merge sort runs in O(n log n) time and typically uses extra memory.</p>
+            <h3>Complexity</h3>
+            <p>Big O describes how resource use grows with input size. Analyze time and auxiliary space separately.</p>
+            <p>Practice implementing linear search, binary search and a simple sorting algorithm in C++.</p>
+        `,
+        question: "What must be true before using ordinary binary search on an array?",
+        options: ["The array must be sorted", "Every value must be unique", "The array must contain only positive values"],
+        answer: 0
+    },
+
+    "MongoDB": {
+        title: "MongoDB Fundamentals",
+        intro: "Learn NoSQL documents, collections, CRUD operations, filters and basic data modeling.",
+        content: `
+            <h3>1. What is MongoDB?</h3>
+            <p>MongoDB is a document-oriented database that stores records as BSON documents in collections.</p>
+            <ul>
+              <li>Database: contains collections.</li>
+              <li>Collection: contains documents.</li>
+              <li>Document: contains fields and values.</li>
+            </ul>
+            <h3>2. Insert a document</h3>
+            <pre><code>db.students.insertOne({
+  name: "Aman",
+  marks: 85,
+  branch: "CSE"
+})</code></pre>
+            <h3>3. Read and filter</h3>
+            <pre><code>db.students.find({ marks: { $gte: 60 } })</code></pre>
+            <h3>4. Update and delete</h3>
+            <pre><code>db.students.updateOne(
+  { name: "Aman" },
+  { $set: { marks: 90 } }
+)
+
+db.students.deleteOne({ name: "Aman" })</code></pre>
+            <p>Use appropriate indexes for frequent queries. Plan document structure around access patterns and validate data where needed.</p>
+            <h3>5. Security</h3>
+            <p>Enable authentication, restrict network access, use least-privilege database users and never expose database credentials in frontend code.</p>
+            <h3>Practice</h3>
+            <p>Write a query to find students whose marks are greater than or equal to 75.</p>
+        `,
+        question: "In MongoDB, what is a collection?",
+        options: ["A group of documents", "A single database server password", "A CSS selector"],
+        answer: 0
+    },
+    "Data Structures": {
+    title: "Data Structures — Complete Lesson",
+
+    intro: "Learn how data is organized, stored, and accessed efficiently.",
+
+    content: `
+        <h3>1. What is a Data Structure?</h3>
+        <p>
+            A data structure is a way to organize and store data
+            so that it can be accessed and modified efficiently.
+        </p>
+
+        <h3>2. Types of Data Structures</h3>
+        <ul>
+            <li><b>Array:</b> Stores elements in indexed positions.</li>
+            <li><b>Linked List:</b> Stores elements as connected nodes.</li>
+            <li><b>Stack:</b> Follows LIFO — Last In, First Out.</li>
+            <li><b>Queue:</b> Follows FIFO — First In, First Out.</li>
+            <li><b>Tree:</b> Organizes data hierarchically.</li>
+            <li><b>Graph:</b> Represents vertices and their connections.</li>
+            <li><b>Hash Table:</b> Stores key-value pairs for efficient lookup.</li>
+        </ul>
+
+        <h3>3. Array Example in C++</h3>
+        <pre><code>
+int arr[5] = {10, 20, 30, 40, 50};
+
+cout << arr[0]; // Output: 10
+cout << arr[2]; // Output: 30
+        </code></pre>
+        <p>
+            Array indexing starts from 0 in C++.
+            Accessing an element by index takes O(1) time.
+        </p>
+
+        <h3>4. Stack Example</h3>
+        <pre><code>
+stack<int> st;
+st.push(10);
+st.push(20);
+st.push(30);
+
+cout << st.top(); // Output: 30
+st.pop();
+        </code></pre>
+        <p>
+            A stack removes the most recently added element first.
+        </p>
+
+        <h3>5. Queue Example</h3>
+        <pre><code>
+queue<int> q;
+q.push(10);
+q.push(20);
+q.push(30);
+
+cout << q.front(); // Output: 10
+q.pop();
+        </code></pre>
+
+        <h3>6. Time Complexity Basics</h3>
+        <ul>
+            <li><b>O(1):</b> Constant time</li>
+            <li><b>O(log n):</b> Logarithmic time</li>
+            <li><b>O(n):</b> Linear time</li>
+            <li><b>O(n log n):</b> Common efficient sorting complexity</li>
+            <li><b>O(n²):</b> Quadratic time</li>
+        </ul>
+
+        <h3>7. Interview Tip</h3>
+        <p>
+            Learn arrays, strings, linked lists, stacks, queues,
+            trees, graphs, hashing, searching, sorting, and Big-O
+            analysis in sequence. Practice implementations in C++.
+        </p>
+    `,
+
+    question: "Which data structure follows LIFO (Last In, First Out)?",
+
+    options: [
+        "Queue",
+        "Stack",
+        "Graph",
+        "Linked List"
+    ],
+
+    answer: 1
+},
+
+"Cyber Security": {
+    title: "Cyber Security — Complete Lesson",
+
+    intro: "Learn how to protect computers, networks, applications, and data from digital threats.",
+
+    content: `
+        <h3>1. What is Cyber Security?</h3>
+        <p>
+            Cyber Security is the practice of protecting systems,
+            networks, applications, and data from unauthorized access,
+            attacks, damage, and theft.
+        </p>
+
+        <h3>2. The CIA Triad</h3>
+        <ul>
+            <li><b>Confidentiality:</b> Only authorized people can access data.</li>
+            <li><b>Integrity:</b> Data remains accurate and is not changed without permission.</li>
+            <li><b>Availability:</b> Systems and information remain accessible when needed.</li>
+        </ul>
+
+        <h3>3. Common Cyber Threats</h3>
+        <ul>
+            <li><b>Phishing:</b> Fake messages or websites designed to steal information.</li>
+            <li><b>Malware:</b> Software designed to harm systems or misuse data.</li>
+            <li><b>Ransomware:</b> Malware that locks or encrypts data to demand payment.</li>
+            <li><b>Brute-force attacks:</b> Repeatedly guessing passwords.</li>
+            <li><b>Social engineering:</b> Tricking people into revealing confidential information.</li>
+            <li><b>Denial of Service (DoS):</b> Overwhelming a service so legitimate users cannot access it.</li>
+        </ul>
+
+        <h3>4. Authentication and Authorization</h3>
+        <p>
+            <b>Authentication</b> verifies who a user is.
+            <b>Authorization</b> determines what that user is allowed to access.
+        </p>
+        <p>
+            Example: Logging in verifies your identity; permissions
+            determine whether you can edit a particular file.
+        </p>
+
+        <h3>5. Encryption Basics</h3>
+        <p>
+            Encryption converts readable data (plaintext) into
+            unreadable ciphertext using a cryptographic method and key.
+            Decryption converts it back when the required key is available.
+        </p>
+        <ul>
+            <li><b>Symmetric encryption:</b> Uses the same secret key for encryption and decryption.</li>
+            <li><b>Asymmetric encryption:</b> Uses a public key and a private key.</li>
+            <li><b>Hashing:</b> Produces a fixed-size digest; it is not the same as encryption.</li>
+        </ul>
+
+        <h3>6. Network Security</h3>
+        <ul>
+            <li><b>Firewall:</b> Filters network traffic according to security rules.</li>
+            <li><b>HTTPS:</b> Protects data in transit between a browser and a website.</li>
+            <li><b>VPN:</b> Creates an encrypted connection between a device and a VPN endpoint.</li>
+            <li><b>IDS/IPS:</b> Systems used to detect or help prevent suspicious network activity.</li>
+        </ul>
+
+        <h3>7. Secure Coding Practices</h3>
+        <ul>
+            <li>Validate and safely handle user input.</li>
+            <li>Use parameterized database queries.</li>
+            <li>Store passwords using a suitable password-hashing algorithm such as Argon2id or bcrypt.</li>
+            <li>Keep dependencies and software updated.</li>
+            <li>Never expose API keys, database passwords, or tokens in public source code.</li>
+            <li>Apply least privilege: grant only the permissions required.</li>
+        </ul>
+
+        <h3>8. Protect Your Accounts</h3>
+        <ul>
+            <li>Use long, unique passwords.</li>
+            <li>Enable multi-factor authentication (MFA).</li>
+            <li>Check website domains before signing in.</li>
+            <li>Avoid unexpected attachments and suspicious links.</li>
+            <li>Back up important files regularly.</li>
+        </ul>
+
+        <h3>9. Ethical Cyber Security Practice</h3>
+        <p>
+            Practice security testing only on systems you own or have
+            explicit permission to test. Use legal training labs,
+            intentionally vulnerable practice applications, and
+            defensive exercises.
+        </p>
+
+        <h3>10. Beginner Learning Roadmap</h3>
+        <ol>
+            <li>Learn computer and operating-system fundamentals.</li>
+            <li>Study networking: IP, DNS, HTTP, TCP and ports.</li>
+            <li>Learn Linux commands and file permissions.</li>
+            <li>Understand authentication, encryption and web security.</li>
+            <li>Practice defensive security in authorized labs.</li>
+        </ol>
+    `,
+
+    question: "Which principle of the CIA Triad ensures that data is accurate and has not been changed without authorization?",
+
+    options: [
+        "Confidentiality",
+        "Integrity",
+        "Availability",
+        "Authentication"
+    ],
+
+    answer: 1
+},
+
+
+    
+};
+
+
+const params = new URLSearchParams(window.location.search);
+const requestedSkill = params.get("skill") || "HTML";
+const skillKey = Object.keys(lessons).find(
+    key => key.toLowerCase() === requestedSkill.trim().toLowerCase()
+);
+const lesson = lessons[skillKey] || {
+    title: requestedSkill + " — Learning Lesson",
+    intro: "A full lesson for this topic has not been added yet.",
+    content: "<p>We will add a topic-specific lesson and practice questions next.</p>",
+    question: "Is this lesson's full content available yet?",
+    options: ["Yes", "Not yet"],
+    answer: 1
+};
+
+document.title = "SkillForge-AI | " + lesson.title;
+document.getElementById("lessonTitle").textContent = lesson.title;
+document.getElementById("lessonIntro").textContent = lesson.intro;
+document.getElementById("lessonContent").innerHTML = lesson.content;
+document.getElementById("quizQuestion").textContent = lesson.question;
+
+const optionsBox = document.getElementById("quizOptions");
+lesson.options.forEach((option, index) => {
+    const label = document.createElement("label");
+    label.style.display = "block";
+    label.style.margin = "10px 0";
+
+    const radio = document.createElement("input");
+    radio.type = "radio";
+    radio.name = "lessonAnswer";
+    radio.value = index;
+
+    label.append(radio, " " + option);
+    optionsBox.appendChild(label);
+});
+
+let quizPassed = false;
+
+document.getElementById("checkAnswerBtn").addEventListener("click", () => {
+    const selected = document.querySelector('input[name="lessonAnswer"]:checked');
+    const feedback = document.getElementById("quizFeedback");
+
+    if (!selected) {
+        feedback.textContent = "Choose an answer first.";
+        return;
+    }
+
+    quizPassed = Number(selected.value) === lesson.answer;
+    feedback.textContent = quizPassed
+        ? "Correct! You can complete this lesson."
+        : "Not quite. Review the lesson and try again.";
+
+    document.getElementById("completeLessonBtn").disabled = !quizPassed;
+    document.getElementById("progressMessage").textContent = quizPassed
+        ? "Practice passed. You can now mark this lesson as completed."
+        : "Answer the practice question correctly to continue.";
+});
+
+
+document.getElementById("completeLessonBtn").addEventListener("click", async () => {
+    if (!quizPassed) return;
+
+    const message = document.getElementById("message");
+    const button = document.getElementById("completeLessonBtn");
+
+    const token = localStorage.getItem("skillforgeToken");
+
+    let user;
+
+    try {
+        user = JSON.parse(localStorage.getItem("skillforgeUser") || "null");
+    } catch {
+        user = null;
+    }
+
+    const userId = user?.id || user?._id;
+
+    if (!token || !userId) {
+        message.textContent = "Please log in again to save your progress.";
+        return;
+    }
+
+    button.disabled = true;
+    button.textContent = "Saving...";
+    message.textContent = "Saving your learning progress...";
+
+    try {
+        const response = await fetch(
+            `http://localhost:5000/api/users/${encodeURIComponent(userId)}/learning-progress`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    skill: skillKey || requestedSkill.trim(),
+                    status: "completed",
+                    progress: 100
+                })
+            }
+        );
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+            throw new Error(data.message || "Could not save lesson progress.");
+        }
+
+        message.textContent = "✓ Lesson completed! Your progress has been saved.";
+        button.textContent = "Completed ✓";
+    } catch (error) {
+        console.error("Lesson completion error:", error);
+        message.textContent = error.message || "Unable to save progress. Please try again.";
+        button.disabled = false;
+        button.textContent = "Mark as Completed";
+    }
+});
+
+</script>
+</body>
+</html>

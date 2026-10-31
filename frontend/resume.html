@@ -1,0 +1,556 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillForge AI | Resume Builder</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #100e1c;
+            color: #f5f3ff;
+        }
+
+        header {
+            padding: 22px 6%;
+            background: #19152b;
+            border-bottom: 1px solid #33294f;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        header h2 { margin: 0; color: #b9a1ff; }
+        header a { color: white; text-decoration: none; }
+
+        .container {
+            display: grid;
+            grid-template-columns: minmax(280px, 1fr) minmax(300px, 1fr);
+            gap: 24px;
+            padding: 30px 5%;
+            align-items: start;
+        }
+
+        .panel {
+            min-width: 0;
+            background: #1b172b;
+            border: 1px solid #352b50;
+            padding: 24px;
+            border-radius: 14px;
+        }
+
+        h1 { font-size: 27px; }
+        h3 { color: #c8b7ff; margin-top: 0; }
+
+        label {
+            display: block;
+            margin: 14px 0 6px;
+            font-size: 14px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 11px;
+            background: #100e1c;
+            border: 1px solid #45385f;
+            border-radius: 7px;
+            color: white;
+            font: inherit;
+        }
+
+        textarea { resize: vertical; min-height: 80px; }
+
+        button {
+            border: 0;
+            padding: 12px 16px;
+            border-radius: 8px;
+            background: #8b5cf6;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 16px;
+        }
+
+        button:disabled { opacity: .65; cursor: wait; }
+        .secondary { background: #39304f; }
+
+        #resumePreview {
+            background: white;
+            color: #242033;
+            padding: 28px;
+            border-radius: 4px;
+            min-height: 500px;
+            overflow-wrap: anywhere;
+        }
+
+        #resumePreview h1 { color: #5437a4; margin: 0 0 8px; }
+
+        #resumePreview h3 {
+            color: #5437a4;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin: 22px 0 8px;
+        }
+
+        #resumePreview p { white-space: pre-wrap; line-height: 1.5; }
+        .contact { font-size: 13px; color: #555; }
+
+        .tailoring-panel {
+            margin-top: 24px;
+            padding: 22px;
+            border: 1px solid #453568;
+            border-radius: 12px;
+            background: #171326;
+        }
+
+        .tailoring-panel p { line-height: 1.6; color: #c4bdd8; }
+
+        #resumeTailoringResults {
+            margin-top: 20px;
+            line-height: 1.7;
+            overflow-wrap: anywhere;
+        }
+
+        #resumeTailoringResults h4 { color: #c8b7ff; margin-bottom: 6px; }
+
+        .tailoring-result-card {
+            padding: 14px;
+            margin-top: 12px;
+            border-radius: 9px;
+            background: #100e1c;
+            border: 1px solid #352b50;
+        }
+
+        .ai-analysis-text h3 { margin-top: 18px; margin-bottom: 8px; }
+        .ai-analysis-text p { white-space: pre-wrap; }
+        .ai-analysis-text li { margin-bottom: 6px; }
+
+        .status-message {
+            padding: 12px;
+            border-radius: 8px;
+            background: #100e1c;
+            border: 1px solid #45385f;
+            overflow-wrap: anywhere;
+        }
+
+        @media (max-width: 750px) {
+            .container { grid-template-columns: 1fr; padding: 18px; }
+            header { padding: 18px; flex-wrap: wrap; }
+        }
+
+        @media print {
+            body { background: white; }
+            header, .form-panel, .preview-heading, #resumeTailoring {
+                display: none !important;
+            }
+            .container { display: block; padding: 0; }
+            .panel { border: 0; padding: 0; }
+            #resumePreview { padding: 15mm; min-height: auto; }
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <h2>SkillForge AI</h2>
+    <a href="dashboard.html">← Back to Dashboard</a>
+</header>
+
+<div class="container">
+    <section class="panel form-panel">
+        <h1>Resume Builder</h1>
+        <p>Fill in your details. Your resume preview updates automatically.</p>
+
+        <label for="fullName">Full Name</label>
+        <input id="fullName" placeholder="Your full name">
+
+        <label for="email">Email</label>
+        <input id="email" type="email" placeholder="you@example.com">
+
+        <label for="phone">Phone (optional)</label>
+        <input id="phone" placeholder="Phone number">
+
+        <label for="career">Career Objective</label>
+        <textarea id="career" placeholder="Your career objective"></textarea>
+
+        <label for="education">Education</label>
+        <textarea id="education" placeholder="Degree, college, year, marks (optional)"></textarea>
+
+        <label for="skills">Skills</label>
+        <textarea id="skills" placeholder="HTML, CSS, JavaScript, C++"></textarea>
+
+        <label for="projects">Projects</label>
+        <textarea id="projects" placeholder="Project name and what you built"></textarea>
+
+        <label for="experience">Experience / Activities (optional)</label>
+        <textarea id="experience" placeholder="Internships, clubs, achievements or activities"></textarea>
+
+        <button type="button" id="saveResumeButton">Save Resume</button>
+        <button type="button" id="downloadResumeButton">Download / Save as PDF</button>
+        <button type="button" class="secondary" id="clearResumeButton">Clear Form</button>
+    </section>
+
+    <section class="panel">
+        <h3 class="preview-heading">Live Resume Preview</h3>
+
+        <article id="resumePreview">
+            <h1 id="previewName">Your Name</h1>
+            <p class="contact" id="previewContact">Email · Phone</p>
+            <h3>Career Objective</h3>
+            <p id="previewCareer">Your objective will appear here.</p>
+            <h3>Education</h3>
+            <p id="previewEducation">Your education will appear here.</p>
+            <h3>Skills</h3>
+            <p id="previewSkills">Your skills will appear here.</p>
+            <h3>Projects</h3>
+            <p id="previewProjects">Your projects will appear here.</p>
+            <h3>Experience & Activities</h3>
+            <p id="previewExperience">Your experience will appear here.</p>
+        </article>
+
+        <div class="tailoring-panel" id="resumeTailoring">
+            <h3>✨ AI Resume Tailoring</h3>
+            <p>Compare your resume with a job description and identify relevant skills and keywords.</p>
+
+            <label for="jobDescription">Job Description</label>
+            <textarea id="jobDescription" placeholder="Paste the job or internship description here..." rows="7"></textarea>
+
+            <button type="button" id="analyzeResumeButton">Analyze Resume Match</button>
+            <div id="resumeTailoringResults" aria-live="polite"></div>
+        </div>
+    </section>
+</div>
+
+<script>
+"use strict";
+
+const API_URL = "http://localhost:5000";
+
+const fields = [
+    "fullName", "email", "phone", "career",
+    "education", "skills", "projects", "experience"
+];
+
+const $ = id => document.getElementById(id);
+
+function getUserAndToken(showAlert = true) {
+    try {
+        const user = JSON.parse(localStorage.getItem("skillforgeUser"));
+        const token = localStorage.getItem("skillforgeToken");
+
+        if (!user || !user.id || !token) {
+            if (showAlert) alert("Please log in to SkillForge AI first.");
+            return null;
+        }
+
+        return { user, token };
+    } catch {
+        if (showAlert) alert("User session not found. Please log in again.");
+        return null;
+    }
+}
+
+function updatePreview() {
+    const name = $("fullName").value.trim();
+    $("previewName").textContent = name || "Your Name";
+
+    const email = $("email").value.trim();
+    const phone = $("phone").value.trim();
+
+    $("previewContact").textContent =
+        [email, phone].filter(Boolean).join(" | ") || "Email · Phone";
+
+    const sections = {
+        career: "Career",
+        education: "Education",
+        skills: "Skills",
+        projects: "Projects",
+        experience: "Experience"
+    };
+
+    for (const [field, section] of Object.entries(sections)) {
+        const value = $(field).value.trim();
+        $("preview" + section).textContent =
+            value || `Add your ${section.toLowerCase()} here.`;
+    }
+}
+
+async function loadResume() {
+    const session = getUserAndToken(false);
+    if (!session) return;
+
+    try {
+        const response = await fetch(
+            `${API_URL}/api/users/${encodeURIComponent(session.user.id)}/resume`,
+            {
+                headers: { Authorization: `Bearer ${session.token}` }
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || `Load failed (${response.status}).`);
+        }
+
+        const resume = data.resume || {};
+
+        fields.forEach(id => {
+            $(id).value = typeof resume[id] === "string" ? resume[id] : "";
+        });
+
+        updatePreview();
+    } catch (error) {
+        console.error("[Resume] Load error:", error);
+    }
+}
+
+async function saveResume() {
+    const session = getUserAndToken();
+    if (!session) return;
+
+    const button = $("saveResumeButton");
+    const resume = {};
+
+    fields.forEach(id => {
+        resume[id] = $(id).value.trim();
+    });
+
+    button.disabled = true;
+    button.textContent = "Saving...";
+
+    try {
+        const response = await fetch(
+            `${API_URL}/api/users/${encodeURIComponent(session.user.id)}/resume`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${session.token}`
+                },
+                body: JSON.stringify(resume)
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || `Save failed (${response.status}).`);
+        }
+
+        alert("Resume successfully saved!");
+    } catch (error) {
+        console.error("[Resume] Save error:", error);
+        alert(`Resume save failed: ${error.message}`);
+    } finally {
+        button.disabled = false;
+        button.textContent = "Save Resume";
+    }
+}
+
+function clearResume() {
+    if (!confirm("Clear all resume fields?")) return;
+
+    fields.forEach(id => { $(id).value = ""; });
+    updatePreview();
+}
+
+function renderAnalysis(text, results) {
+    results.replaceChildren();
+
+    const card = document.createElement("div");
+    card.className = "tailoring-result-card";
+
+    const heading = document.createElement("h4");
+    heading.textContent = "Gemini AI Resume Analysis";
+
+    const content = document.createElement("div");
+    content.className = "ai-analysis-text";
+
+    let currentList = null;
+
+    text.split(/\r?\n/).forEach(line => {
+        const trimmed = line.trim();
+
+        if (!trimmed) {
+            currentList = null;
+            return;
+        }
+
+        if (/^[-*_]{3,}$/.test(trimmed)) {
+            currentList = null;
+            return;
+        }
+
+        const headingMatch = trimmed.match(/^#{1,6}\s+(.+)/);
+
+        if (headingMatch) {
+            const subheading = document.createElement("h3");
+            subheading.textContent = headingMatch[1].replace(/\*\*/g, "");
+            content.appendChild(subheading);
+            currentList = null;
+            return;
+        }
+
+        if (/^(\*|-|•)\s+/.test(trimmed)) {
+            if (!currentList) {
+                currentList = document.createElement("ul");
+                content.appendChild(currentList);
+            }
+
+            const item = document.createElement("li");
+            item.textContent = trimmed
+                .replace(/^(\*|-|•)\s+/, "")
+                .replace(/\*\*/g, "")
+                .replace(/\*/g, "");
+
+            currentList.appendChild(item);
+            return;
+        }
+
+        currentList = null;
+
+        const paragraph = document.createElement("p");
+        paragraph.textContent = trimmed.replace(/\*\*/g, "").replace(/\*/g, "");
+        content.appendChild(paragraph);
+    });
+
+    card.append(heading, content);
+    results.appendChild(card);
+}
+
+let analysisInProgress = false;
+
+async function analyzeResume() {
+    const button = $("analyzeResumeButton");
+    const results = $("resumeTailoringResults");
+
+    // Prevent overlapping requests from repeated clicks.
+    if (analysisInProgress) return;
+
+    const jobDescription = $("jobDescription").value.trim();
+
+    if (!jobDescription) {
+        results.textContent = "Please paste a job description first.";
+        return;
+    }
+
+    const resumeText = fields
+        .map(id => {
+            const value = $(id).value.trim();
+            return value ? `${id}: ${value}` : "";
+        })
+        .filter(Boolean)
+        .join("\n");
+
+    if (!resumeText) {
+        results.textContent = "Please fill in your resume details before analyzing.";
+        return;
+    }
+
+    const session = getUserAndToken(false);
+
+    if (!session) {
+        results.textContent = "Please log in again before using AI Resume Tailoring.";
+        return;
+    }
+
+    analysisInProgress = true;
+    button.disabled = true;
+    button.textContent = "AI is analyzing...";
+    results.replaceChildren();
+
+    const status = document.createElement("p");
+    status.className = "status-message";
+    status.textContent = "Sending your resume to Gemini AI. Please wait...";
+    results.appendChild(status);
+
+    try {
+        // Deliberately no client-side AbortController timeout.
+        // The browser must not cancel a slow but valid Gemini request.
+        console.log("[Resume AI] Sending request to backend");
+
+        const response = await fetch(`${API_URL}/api/ai-resume-tailor`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${session.token}`
+            },
+            body: JSON.stringify({ resumeText, jobDescription })
+        });
+
+        console.log("[Resume AI] HTTP status:", response.status);
+
+        const rawBody = await response.text();
+        let data;
+
+        try {
+            data = JSON.parse(rawBody);
+        } catch {
+            throw new Error(
+                `Backend returned an invalid response (HTTP ${response.status}).`
+            );
+        }
+
+        console.log("[Resume AI] Backend response received:", {
+            status: response.status,
+            success: data.success
+        });
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.message || `Analysis failed (HTTP ${response.status}).`
+            );
+        }
+
+        if (typeof data.answer !== "string" || !data.answer.trim()) {
+            throw new Error("Gemini returned an empty analysis.");
+        }
+
+        renderAnalysis(data.answer, results);
+        console.log("[Resume AI] Analysis displayed successfully");
+
+    } catch (error) {
+        console.error("[Resume AI] Request failed:", error);
+
+        results.replaceChildren();
+
+        const errorBox = document.createElement("p");
+        errorBox.className = "status-message";
+
+        if (error instanceof TypeError) {
+            errorBox.textContent =
+                "Could not connect to the backend. Check that SkillForge AI server is running at http://localhost:5000.";
+        } else {
+            errorBox.textContent = `AI analysis failed: ${error.message}`;
+        }
+
+        results.appendChild(errorBox);
+
+    } finally {
+        analysisInProgress = false;
+        button.disabled = false;
+        button.textContent = "Analyze Resume Match";
+    }
+}
+
+fields.forEach(id => {
+    $(id).addEventListener("input", updatePreview);
+});
+
+$("saveResumeButton").addEventListener("click", saveResume);
+$("downloadResumeButton").addEventListener("click", () => window.print());
+$("clearResumeButton").addEventListener("click", clearResume);
+$("analyzeResumeButton").addEventListener("click", analyzeResume);
+
+updatePreview();
+loadResume();
+</script>
+</body>
+</html>

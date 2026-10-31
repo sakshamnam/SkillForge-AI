@@ -1,0 +1,643 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard | SkillForge AI</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="dashboard-logo">
+            âš¡ SkillForge <span>AI</span>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="#" class="nav-item active">
+                ðŸ 
+                <span>Dashboard</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                ðŸ‘¤
+                <span>My Profile</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                ðŸ§ 
+                <span>Skills</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                ðŸ—ºï¸
+                <span>Learning Roadmap</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                ðŸ’¼
+                <span>Opportunities</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                ðŸ“„
+                <span>Resume Builder</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <a href="#" class="nav-item">
+                âš™ï¸
+                <span>Settings</span>
+            </a>
+
+            <a href="index.html" class="nav-item logout">
+                ðŸšª
+                <span>Logout</span>
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="dashboard-main">
+
+        <!-- TOP BAR -->
+        <header class="dashboard-header">
+
+            <div>
+                <p class="dashboard-small-title">STUDENT DASHBOARD</p>
+                <h1>Welcome back, <span id="userName">Student</span> ðŸ‘‹</h1>
+                <p class="dashboard-subtitle">
+                    Track your skills, learning progress and career growth.
+                </p>
+            </div>
+
+           <div class="profile-card" id="profileCard">
+
+```
+<div class="profile-card-top">
+    <div class="profile-avatar-large" id="profileAvatar">
+        S
+    </div>
+
+    <div class="profile-card-info">
+        <h3 id="profileCardName">Student</h3>
+        <p id="profileCardGoal">Career Goal</p>
+    </div>
+</div>
+
+<div class="profile-card-details">
+
+    <div class="profile-detail">
+        <span>ðŸŽ“</span>
+        <div>
+            <small>Branch</small>
+            <strong id="profileBranch">CSE</strong>
+        </div>
+    </div>
+
+    <div class="profile-detail">
+        <span>ðŸ“š</span>
+        <div>
+            <small>Year</small>
+            <strong id="profileYear">1st Year</strong>
+        </div>
+    </div>
+
+    <div class="profile-detail">
+        <span>ðŸ§ </span>
+        <div>
+            <small>Skills</small>
+            <strong id="profileSkillCount">0</strong>
+        </div>
+    </div>
+
+    <div class="profile-detail">
+        <span>ðŸ“Š</span>
+        <div>
+            <small>Skill Match</small>
+            <strong id="profileMatch">72%</strong>
+        </div>
+    </div>
+
+</div>
+
+<button class="profile-edit-btn" id="editProfileBtn">
+    âœï¸ Edit Profile
+</button>
+```
+
+</div>
+
+
+        </header>
+
+
+        <!-- STATS -->
+        <section class="stats-grid">
+
+            <div class="stat-card">
+
+                <div class="stat-icon">ðŸ§ </div>
+
+                <div>
+                    <p>Skills Added</p>
+                    <h2>6</h2>
+                    <span class="stat-positive">+2 this month</span>
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">ðŸ“Š</div>
+
+                <div>
+                    <p>Skill Match</p>
+                    <h2>72%</h2>
+                    <span class="stat-positive">+8% improvement</span>
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">ðŸ’¼</div>
+
+                <div>
+                    <p>Opportunities</p>
+                    <h2>18</h2>
+                    <span class="stat-positive">5 new matches</span>
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">ðŸš€</div>
+
+                <div>
+                    <p>Learning Progress</p>
+                    <h2>64%</h2>
+                    <span class="stat-positive">On track</span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- MAIN GRID -->
+        <section class="dashboard-grid">
+
+
+            <!-- SKILLS -->
+            <div class="dashboard-card skills-card">
+
+                <div class="card-heading">
+
+                    <div>
+                        <p class="card-label">YOUR SKILLS</p>
+                        <h2>Skill Overview</h2>
+                    </div>
+
+                 <button class="card-button" id="addSkillBtn">
+    + Add Skill
+</button>
+                </div>
+
+
+                <div class="skill-list" id="skillList"></div>
+
+                    <div class="skill-row">
+
+                        <div class="skill-info">
+                            <strong>HTML</strong>
+                            <span>Advanced</span>
+                        </div>
+
+                        <div class="progress">
+                            <div style="width: 90%"></div>
+                        </div>
+
+                        <b>90%</b>
+
+                    </div>
+
+
+                    <div class="skill-row">
+
+                        <div class="skill-info">
+                            <strong>CSS</strong>
+                            <span>Intermediate</span>
+                        </div>
+
+                        <div class="progress">
+                            <div style="width: 75%"></div>
+                        </div>
+
+                        <b>75%</b>
+
+                    </div>
+
+
+                    <div class="skill-row">
+
+                        <div class="skill-info">
+                            <strong>JavaScript</strong>
+                            <span>Intermediate</span>
+                        </div>
+
+                        <div class="progress">
+                            <div style="width: 65%"></div>
+                        </div>
+
+                        <b>65%</b>
+
+                    </div>
+
+
+                    <div class="skill-row">
+
+                        <div class="skill-info">
+                            <strong>Node.js</strong>
+                            <span>Beginner</span>
+                        </div>
+
+                        <div class="progress">
+                            <div style="width: 45%"></div>
+                        </div>
+
+                        <b>45%</b>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+<!-- SKILL GAP ANALYSIS -->
+
+<div class="dashboard-card skill-gap-card">
+
+    <div class="card-heading">
+        <div>
+            <p class="card-label">AI ANALYSIS</p>
+            <h2>Skill Gap Analysis</h2>
+        </div>
+
+        <span class="gap-score" id="gapScore">Analyze Skills</span>
+    </div>
+
+    <p class="gap-description" id="gapDescription">
+        Analyze your current skills to identify the skills needed for your career goal.
+    </p>
+
+    <div class="gap-list" id="gapList">
+        <div class="gap-item">
+            <span>Click Analyze My Skills</span>
+            <b>Ready</b>
+        </div>
+    </div>
+
+    <button class="primary-dashboard-button" id="analyzeSkillsBtn">
+        Analyze My Skills →
+    </button>
+
+</div>
+            <!-- AI INSIGHT -->
+            <div class="dashboard-card ai-card">
+
+                <div class="ai-badge">
+                    âœ¨ AI INSIGHT
+                </div>
+
+                <h2>Your next skill should be...</h2>
+
+                <div class="ai-skill">
+                    <div class="ai-skill-icon">âš›ï¸</div>
+
+                    <div>
+                        <h3>React.js</h3>
+                        <p>
+                            Based on your current skills and career goal,
+                            React.js can improve your frontend development profile.
+                        </p>
+                    </div>
+                </div>
+
+                <button class="primary-dashboard-button">
+                    Generate My Roadmap â†’
+                </button>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- LOWER GRID -->
+        <section class="dashboard-grid lower-grid">
+
+
+            <!-- ROADMAP -->
+            <div class="dashboard-card">
+
+                <div class="card-heading">
+
+                    <div>
+                        <p class="card-label">LEARNING</p>
+                        <h2>Current Roadmap</h2>
+                    </div>
+<span class="roadmap-progress" id="roadmapProgress">
+    0%
+</span>
+
+                </div>
+
+
+                <div class="roadmap-item completed">
+
+                    <div class="roadmap-number">âœ“</div>
+
+                    <div>
+                        <strong>HTML & CSS Fundamentals</strong>
+                        <p>Completed</p>
+                    </div>
+
+                </div>
+
+
+                <div class="roadmap-item completed">
+
+                    <div class="roadmap-number">âœ“</div>
+
+                    <div>
+                        <strong>JavaScript Basics</strong>
+                        <p>Completed</p>
+                    </div>
+
+                </div>
+
+
+                <div class="roadmap-item current">
+
+                    <div class="roadmap-number">3</div>
+
+                    <div>
+                        <strong>React.js</strong>
+                        <p>Currently learning</p>
+                    </div>
+
+                </div>
+
+
+                <div class="roadmap-item">
+
+                    <div class="roadmap-number">4</div>
+
+                    <div>
+                        <strong>Node.js & APIs</strong>
+                        <p>Upcoming</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- OPPORTUNITIES -->
+            <div class="dashboard-card">
+
+                <div class="card-heading">
+
+                    <div>
+                        <p class="card-label">RECOMMENDED</p>
+                        <h2>Opportunities</h2>
+                    </div>
+
+                    <button class="text-button">
+                        View all â†’
+                    </button>
+
+                </div>
+
+
+                <div class="opportunity">
+
+                    <div class="company-logo">T</div>
+
+                    <div class="opportunity-info">
+
+                        <strong>Frontend Developer Intern</strong>
+
+                        <p>TechNova â€¢ Remote</p>
+
+                    </div>
+
+                    <span class="match">92% Match</span>
+
+                </div>
+
+
+                <div class="opportunity">
+
+                    <div class="company-logo">A</div>
+
+                    <div class="opportunity-info">
+
+                        <strong>Web Development Intern</strong>
+
+                        <p>ABC Technologies â€¢ Hybrid</p>
+
+                    </div>
+
+                    <span class="match">86% Match</span>
+
+                </div>
+
+
+                <div class="opportunity">
+
+                    <div class="company-logo">D</div>
+
+                    <div class="opportunity-info">
+
+                        <strong>Junior Developer Intern</strong>
+
+                        <p>DevWorks â€¢ Remote</p>
+
+                    </div>
+
+                    <span class="match">81% Match</span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- AI ASSISTANT -->
+        <section class="ai-assistant-banner">
+            <!-- AI CAREER ASSISTANT -->
+
+<div class="dashboard-card ai-assistant-card">
+
+    <div class="card-heading">
+        <div>
+            <p class="card-label">AI CAREER ASSISTANT</p>
+            <h2>Ask SkillForge AI ðŸ¤–</h2>
+        </div>
+    </div>
+
+    <p class="ai-assistant-description">
+        Ask questions about skills, careers, projects, internships and learning.
+    </p>
+
+    <div class="ai-chat-box" id="aiChatBox">
+        <div class="ai-message">
+            ðŸ‘‹ Hi! I'm SkillForge AI. Ask me anything about your career.
+        </div>
+    </div>
+
+    <div class="ai-input-area">
+
+        <input
+            type="text"
+            id="aiQuestion"
+            placeholder="e.g. What should I learn after JavaScript?"
+        />
+
+        <button
+            class="primary-dashboard-button"
+            id="askAIButton"
+        >
+            Ask AI â†’
+        </button>
+
+    </div>
+
+</div>
+
+            <div>
+
+                <div class="assistant-tag">
+                    âœ¨ POWERED BY AI
+                </div>
+
+                <h2>Not sure what to learn next?</h2>
+
+                <p>
+                    Let SkillForge AI analyze your skills and create
+                    a personalized career roadmap.
+                </p>
+
+            </div>
+
+            <button class="primary-dashboard-button">
+                Ask SkillForge AI â†’
+            </button>
+
+        </section>
+
+
+        <footer class="dashboard-footer">
+
+            <p>Â© 2026 SkillForge AI</p>
+
+            <p>Build Skills. Build Your Future. ðŸš€</p>
+
+        </footer>
+<!-- CAMERA VERIFICATION -->
+
+<section class="dashboard-card camera-card">
+
+    <div class="card-heading">
+        <div>
+            <p class="card-label">IDENTITY VERIFICATION</p>
+            <h2>Camera Verification</h2>
+        </div>
+
+        <span class="camera-status" id="cameraStatus">
+            Not Started
+        </span>
+    </div>
+
+    <p class="camera-description">
+        Use your camera for consent-based identity verification.
+        Your camera will only start after you give permission.
+    </p>
+
+    <div class="camera-box">
+        <video id="cameraVideo" autoplay playsinline></video>
+        <div class="camera-placeholder" id="cameraPlaceholder">
+            ðŸ“· Camera is off
+        </div>
+    </div>
+
+    <label class="camera-consent">
+        <input type="checkbox" id="cameraConsent">
+        I give permission to use my camera for verification.
+    </label>
+
+    <div class="camera-actions">
+
+        <button
+            class="primary-dashboard-button"
+            id="startCameraBtn">
+            Start Camera
+        </button>
+
+        <button
+            class="camera-stop-button"
+            id="stopCameraBtn">
+            Stop Camera
+        </button>
+
+    </div>
+
+</section>
+    </main>
+
+
+    <script src="script.js"></script>
+
+    <script>
+
+        // Load logged-in user
+        const savedUser = localStorage.getItem("skillforgeUser");
+
+        if (savedUser) {
+
+            const user = JSON.parse(savedUser);
+
+            document.getElementById("userName").textContent = user.name;
+            document.getElementById("profileName").textContent = user.name;
+            document.getElementById("careerGoal").textContent = user.careerGoal;
+
+            const avatar =
+                user.name.charAt(0).toUpperCase();
+
+            document.querySelector(".profile-avatar").textContent = avatar;
+        }
+
+    </script>
+<script src="dashboard.js"></script>
+</body>
+</html>

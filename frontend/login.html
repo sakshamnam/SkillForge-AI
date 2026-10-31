@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | SkillForge AI</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+
+<body>
+    <div class="auth-page">
+        <div class="auth-card">
+
+            <div class="auth-logo">
+                <span class="logo-icon">⚡</span>
+                SkillForge <span>AI</span>
+            </div>
+
+            <div class="auth-header">
+                <h1>Welcome back<span>.</span></h1>
+                <p>Continue your career journey.</p>
+            </div>
+
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="loginEmail">Email address</label>
+                    <input
+                        type="email"
+                        id="loginEmail"
+                        placeholder="you@example.com"
+                        autocomplete="email"
+                        required
+                    >
+                </div>
+
+                <div class="input-group">
+                    <label for="loginPassword">Password</label>
+                    <input
+                        type="password"
+                        id="loginPassword"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="auth-btn">
+                    Login <span>→</span>
+                </button>
+            </form>
+
+            <div class="google-login-divider">
+                <span>OR CONTINUE WITH</span>
+            </div>
+
+            <div id="googleSignInButton"></div>
+            <p id="googleLoginMessage" role="status"></p>
+
+            <p class="auth-switch">
+                Don't have an account?
+                <a href="register.html">Create account</a>
+            </p>
+
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+    <script>
+        window.addEventListener("load", function () {
+            if (window.google && google.accounts && google.accounts.id) {
+                google.accounts.id.initialize({
+                    client_id: "670504021057-53htjtgu8bv4giu9s40jmniiultlsoqt.apps.googleusercontent.com",
+                    callback: window.handleGoogleCredential,
+                    auto_select: false
+                });
+
+                google.accounts.id.renderButton(
+                    document.getElementById("googleSignInButton"),
+                    {
+                        theme: "outline",
+                        size: "large",
+                        text: "continue_with",
+                        shape: "rectangular",
+                        width: 280
+                    }
+                );
+            }
+        });
+    </script>
+</body>
+</html>

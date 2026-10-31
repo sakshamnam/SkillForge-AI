@@ -1,0 +1,1564 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | SkillForge AI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    
+<script>
+(function () {
+    const token = localStorage.getItem("skillforgeToken");
+    const savedUser = localStorage.getItem("skillforgeUser");
+
+    let user = null;
+
+    try {
+        user = savedUser ? JSON.parse(savedUser) : null;
+    } catch (error) {
+        console.error("Invalid saved user data:", error);
+    }
+
+    if (!token || !user || !user.id) {
+        localStorage.removeItem("skillforgeToken");
+        localStorage.removeItem("skillforgeUser");
+
+        window.location.replace(
+            "http://localhost:5500/SkillForge-AI/frontend/login.html"
+        );
+    }
+})();
+</script>
+
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="dashboard-logo">
+            ⚡ SkillForge <span>AI</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active">
+                🏠 <span>Dashboard</span>
+            </a>
+
+            <a href="#profileCard" class="nav-item">
+                👤 <span>My Profile</span>
+            </a>
+
+            <a href="#skillsSection" class="nav-item">
+                🧠 <span>Skills</span>
+            </a>
+
+            <a href="#roadmapSection" class="nav-item">
+                🗺️ <span>Learning Roadmap</span>
+            </a>
+
+            <a href="#opportunitiesSection" class="nav-item">
+                💼 <span>Opportunities</span>
+            </a>
+
+            <a href="resume.html" class="nav-item">
+                📄 <span>Resume Builder</span>
+            </a>
+            <a href="#applicationTrackerSection" class="nav-item">
+    📋 <span>Application Tracker</span>
+</a>
+        </nav>
+
+        <div class="sidebar-bottom">
+           
+<a href="#settingsSection" class="nav-item" id="settingsNavLink">
+    ⚙️ <span>Settings</span>
+</a>
+
+           <a href="#" class="nav-item logout" id="logoutBtn">
+    🚪 <span>Logout</span>
+</a>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="dashboard-main">
+
+        <!-- TOP BAR -->
+        <header class="dashboard-header">
+
+            <div class="dashboard-welcome">
+                <div class="welcome-eyebrow">
+                    <span class="welcome-dot"></span>
+                    STUDENT DASHBOARD
+                </div>
+
+                <h1>
+                    Welcome back, <span id="userName">Student</span> 👋
+                </h1>
+
+                <p class="dashboard-subtitle">
+                    Track your skills, learning progress and career growth.
+                </p>
+
+                <div class="welcome-highlight">
+                    <span>🚀</span>
+                    <span>Keep learning. Keep growing.</span>
+                </div>
+            </div>
+
+
+            <!-- PROFILE SUMMARY -->
+            <div class="profile-card" id="profileCard">
+
+                <div class="profile-card-top">
+                    <div class="profile-avatar-large" id="profileAvatar">S</div>
+
+                    <div class="profile-card-info">
+                        <p class="profile-mini-label">YOUR PROFILE</p>
+                        <h3 id="profileCardName">Student</h3>
+                        <p id="profileCardGoal">Career Goal</p>
+                    </div>
+                </div>
+
+                <div class="profile-card-details">
+
+                    <div class="profile-detail">
+                        <span>🎓</span>
+                        <div>
+                            <small>Branch</small>
+                            <strong id="profileBranch">CSE</strong>
+                        </div>
+                    </div>
+
+                    <div class="profile-detail">
+                        <span>📚</span>
+                        <div>
+                            <small>Year</small>
+                            <strong id="profileYear">1st Year</strong>
+                        </div>
+                    </div>
+
+                    <div class="profile-detail">
+                        <span>🧠</span>
+                        <div>
+                            <small>Skills</small>
+                            <strong id="profileSkillCount">0</strong>
+                        </div>
+                    </div>
+
+                    <div class="profile-detail">
+                        <span>📊</span>
+                        <div>
+                            <small>Skill Match</small>
+                            <strong id="profileMatch">72%</strong>
+                        </div>
+                    </div>
+
+                </div>
+
+                <button class="profile-edit-btn" id="editProfileBtn" type="button">
+                    <span>✏️</span> Edit Profile
+                    <span class="profile-btn-arrow">→</span>
+                </button>
+
+                <div
+                    class="profile-social-links"
+                    id="profileSocialLinks"
+                    style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;"
+                ></div>
+
+            </div>
+
+        </header>
+
+
+        <!-- STATS -->
+        <section class="stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-icon">🧠</div>
+                <div>
+                    <p>Skills Added</p>
+                    <h2 id="skillsAddedStat">0</h2>
+                    <span class="stat-positive">Skills in your profile</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div>
+                    <p>Skill Match</p>
+                    <h2 id="skillMatchStat">—</h2>
+                    <span class="stat-positive">Based on AI analysis</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">💼</div>
+                <div>
+                    <p>Opportunities</p>
+                    <h2>18</h2>
+                    <span class="stat-positive">5 new matches</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">🚀</div>
+                <div>
+                    <p>Learning Progress</p>
+                    <h2 id="learningProgressStat">0%</h2>
+                    <span class="stat-positive">Based on completed roadmap steps</span>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- MAIN GRID: ONLY ONE COPY -->
+        <section class="dashboard-grid">
+
+            <!-- SKILLS -->
+            <div class="dashboard-card skills-card" id="skillsSection">
+
+                <div class="card-heading">
+                    <div>
+                        <p class="card-label">YOUR SKILLS</p>
+                        <h2>Skill Overview</h2>
+                    </div>
+
+                    <button class="card-button" id="addSkillBtn" type="button">
+                        + Add Skill
+                    </button>
+                </div>
+
+                <!-- Skills loaded from MongoDB -->
+                <div class="skill-list" id="skillList"></div>
+
+            </div>
+
+
+            <!-- SKILL GAP ANALYSIS -->
+            <div class="dashboard-card skill-gap-card">
+
+                <div class="card-heading">
+                    <div>
+                        <p class="card-label">AI ANALYSIS</p>
+                        <h2>Skill Gap Analysis</h2>
+                    </div>
+
+                    <span class="gap-score" id="gapScore">Analyze Skills</span>
+                </div>
+
+                <p class="gap-description" id="gapDescription">
+                    Analyze your current skills to identify the skills needed for your career goal.
+                </p>
+
+                <div class="gap-list" id="gapList">
+                    <div class="gap-item">
+                        <span>Click Analyze My Skills</span>
+                        <b>Ready</b>
+                    </div>
+                </div>
+
+                <button
+                    class="primary-dashboard-button"
+                    id="analyzeSkillsBtn"
+                    type="button"
+                >
+                    Analyze My Skills
+                </button>
+
+            </div>
+
+
+            <!-- AI INSIGHT -->
+            <div class="dashboard-card ai-card">
+
+                <div class="ai-badge">
+                    ✨ AI INSIGHT
+                </div>
+
+                <h2>Your next skill should be...</h2>
+
+                <div class="ai-skill">
+                    <div class="ai-skill-icon">⚛️</div>
+
+                    <div>
+                        <h3>React.js</h3>
+                        <p>
+                            Based on your current skills and career goal,
+                            React.js can improve your frontend development profile.
+                        </p>
+                    </div>
+                </div>
+
+                <button
+                    class="primary-dashboard-button"
+                    id="generateRoadmapBtn"
+                    type="button"
+                >
+                    Generate My Roadmap →
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- LOWER GRID -->
+        <section class="dashboard-grid lower-grid">
+
+            <!-- LEARNING ROADMAP -->
+            <div class="dashboard-card roadmap-card" id="roadmapSection">
+
+                <div class="card-heading">
+                    <div>
+                        <p class="card-label">LEARNING</p>
+                        <h2>Current Roadmap</h2>
+                    </div>
+
+                    <span class="roadmap-progress" id="roadmapProgress">
+                        0%
+                    </span>
+                </div>
+
+                <!-- Default roadmap -->
+                <div class="roadmap-item completed">
+                    <div class="roadmap-number">✓</div>
+                    <div>
+                        <strong>HTML &amp; CSS Fundamentals</strong>
+                        <p>Completed</p>
+                    </div>
+                </div>
+
+                <div class="roadmap-item completed">
+                    <div class="roadmap-number">✓</div>
+                    <div>
+                        <strong>JavaScript Basics</strong>
+                        <p>Completed</p>
+                    </div>
+                </div>
+
+                <div class="roadmap-item current">
+                    <div class="roadmap-number">3</div>
+                    <div>
+                        <strong>React.js</strong>
+                        <p>Currently learning</p>
+                    </div>
+                </div>
+
+                <div class="roadmap-item">
+                    <div class="roadmap-number">4</div>
+                    <div>
+                        <strong>Node.js &amp; APIs</strong>
+                        <p>Upcoming</p>
+                    </div>
+                </div>
+
+                <!-- Personalized roadmap from backend -->
+                <div id="personalizedRoadmap"></div>
+
+            </div>
+
+
+         
+           
+
+<!-- OPPORTUNITIES -->
+<div class="dashboard-card opportunities-card" id="opportunitiesSection">
+
+    <div class="card-heading">
+        <div>
+            <p class="card-label">EXPLORE CAREER PATHS</p>
+            <h2>Opportunities</h2>
+            <p>Explore internships across different technology fields.</p>
+        </div>
+
+        <a class="text-button"
+           href="https://wellfound.com/browse/tech-job-locations/india"
+           target="_blank" rel="noopener noreferrer"
+           style="text-decoration:none">
+            View all →
+        </a>
+    </div>
+
+<!-- SEARCH OPPORTUNITIES -->
+<div class="form-group" style="margin: 18px 0;">
+    <label for="opportunitySearch">Search Opportunities</label>
+    <input
+        type="search"
+        id="opportunitySearch"
+        placeholder="Search by role, company or skill..."
+        autocomplete="off"
+    >
+</div>
+
+    <!-- CATEGORY FILTER -->
+    <div class="form-group" style="margin:18px 0;">
+        <label for="opportunityCategoryFilter">Filter by career path</label>
+        <select id="opportunityCategoryFilter">
+            <option value="all">All Career Paths</option>
+            <option value="web">Web Development</option>
+            <option value="ai">AI / ML Engineering</option>
+            <option value="cyber">Cybersecurity</option>
+            <option value="data">Data Science</option>
+            <option value="cloud">Cloud & DevOps</option>
+            <option value="app">App Development</option>
+            <option value="software">Software Engineering</option>
+        </select>
+    </div>
+
+    <div class="opportunity-list">
+
+        <!-- WEB DEVELOPMENT -->
+        <div class="opportunity" data-category="web">
+            <div class="company-logo">W</div>
+            <div class="opportunity-info">
+                <strong>Web Development Intern</strong>
+                <p>Frontend • Backend • Full Stack</p>
+                <a href="https://in.linkedin.com/jobs/frontend-intern-jobs"
+                   target="_blank" rel="noopener noreferrer">
+                    Explore Web Internships ↗
+                </a>
+            </div>
+        </div>
+
+        <!-- AI / ML -->
+        <div class="opportunity" data-category="ai">
+            <div class="company-logo">AI</div>
+            <div class="opportunity-info">
+                <strong>AI / ML Engineering Intern</strong>
+                <p>Machine Learning • Generative AI • Python</p>
+                <a href="https://in.linkedin.com/jobs/artificial-intelligence-intern-jobs"
+                   target="_blank" rel="noopener noreferrer">
+                    Explore AI / ML Internships ↗
+                </a>
+            </div>
+        </div>
+
+        <!-- CYBERSECURITY -->
+        <div class="opportunity" data-category="cyber">
+            <div class="company-logo">C</div>
+            <div class="opportunity-info">
+                <strong>Cybersecurity Intern</strong>
+                <p>Information Security • Network Security • SOC</p>
+                <a href="https://in.linkedin.com/jobs/information-security-intern-jobs"
+                   target="_blank" rel="noopener noreferrer">
+                    Explore Cybersecurity Roles ↗
+                </a>
+            </div>
+        </div>
+
+        <!-- DATA SCIENCE -->
+        <div class="opportunity" data-category="data">
+            <div class="company-logo">D</div>
+            <div class="opportunity-info">
+                <strong>Data Science / Data Analyst Intern</strong>
+                <p>Python • SQL • Data Analytics</p>
+                <a href="https://www.linkedin.com/jobs/search/?keywords=Data%20Science%20Intern&location=India"
+                   target="_blank" rel="noopener noreferrer">
+                    Explore Data Science Roles ↗
+                </a>
+            </div>
+        </div>
+
+        <!-- CLOUD AND DEVOPS -->
+        <div class="opportunity" data-category="cloud">
+            <div class="company-logo">☁</div>
+            <div class="opportunity-info">
+                <strong>Cloud / DevOps Intern</strong>
+                <p>AWS • Azure • Linux • CI/CD</p>
+                <a href="https://www.linkedin.com/jobs/search/?keywords=Cloud%20DevOps%20Intern&location=India"
+                   target="_blank" rel="noopener noreferrer">
+                    Explore Cloud & DevOps Roles ↗
+                </a>
+            </div>
+        </div>
+
+        <!-- APP DEVELOPMENT -->
+        <div class="opportunity" data-category="app">
+            <div class="company-logo">A</div>
+            <div class="opportunity-info">
+                <strong>Mobile App Development Intern</strong>
+                <p>Android • Kotlin • Flutter</p>
+                <a href="https://www.linkedin.com/jobs/search/?keywords=Mobile%20App%20Developer%20Intern&location=India"
+                   target="_blank" rel="noopener noreferrer">
+                    Explore App Development Roles ↗
+                </a>
+            </div>
+        </div>
+
+        <!-- SOFTWARE ENGINEERING -->
+        <div class="opportunity" data-category="software">
+            <div class="company-logo">S</div>
+            <div class="opportunity-info">
+                <strong>Software Engineering Intern</strong>
+                <p>C++ • Java • DSA • Problem Solving</p>
+                <a href="https://www.linkedin.com/jobs/search/?keywords=Software%20Engineer%20Intern&location=India"
+                   target="_blank" rel="noopener noreferrer">
+                    Explore Software Engineering Roles ↗
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <p style="font-size:12px;opacity:0.7;margin-top:14px;">
+        These links open external job-search pages, not guaranteed placements.
+        Check eligibility, deadlines and employer details before applying.
+    </p>
+
+</div>
+<!-- END OPPORTUNITIES -->
+
+
+        </section>
+
+<!-- APPLICATION TRACKER -->
+<div class="dashboard-card" id="applicationTrackerSection">
+
+    <div class="card-heading">
+        <div>
+            <p class="card-label">CAREER MANAGEMENT</p>
+            <h2>Application Tracker</h2>
+            <p>Track your job and internship applications.</p>
+        </div>
+    </div>
+    
+<!-- APPLICATION TRACKER STATISTICS -->
+<div class="application-stats-grid">
+
+    <div class="application-stat-card">
+        <span>Total Applications</span>
+        <h3 id="totalApplicationsStat">0</h3>
+    </div>
+
+    <div class="application-stat-card">
+        <span>Applied</span>
+        <h3 id="appliedApplicationsStat">0</h3>
+    </div>
+
+    <div class="application-stat-card">
+        <span>Interviews</span>
+        <h3 id="interviewApplicationsStat">0</h3>
+    </div>
+
+    <div class="application-stat-card">
+        <span>Selected</span>
+        <h3 id="selectedApplicationsStat">0</h3>
+    </div>
+
+    <div class="application-stat-card">
+        <span>Rejected</span>
+        <h3 id="rejectedApplicationsStat">0</h3>
+    </div>
+
+</div>
+<!-- END APPLICATION TRACKER STATISTICS -->
+
+
+    <form id="applicationForm" class="application-form">
+
+        <div class="form-group">
+            <label for="applicationCompany">Company Name</label>
+            <input
+                type="text"
+                id="applicationCompany"
+                placeholder="e.g. Google"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="applicationRole">Job / Internship Role</label>
+            <input
+                type="text"
+                id="applicationRole"
+                placeholder="e.g. Web Development Intern"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="applicationLink">Application Link</label>
+            <input
+                type="url"
+                id="applicationLink"
+                placeholder="https://..."
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="applicationStatus">Application Status</label>
+            <select id="applicationStatus" required>
+                <option value="Applied">Applied</option>
+                <option value="Interview">Interview</option>
+                <option value="Selected">Selected</option>
+                <option value="Rejected">Rejected</option>
+            </select>
+        </div>
+
+        <button type="submit" class="primary-button">
+            + Add Application
+        </button>
+
+    </form>
+
+<div id="applicationMessage" role="status"></div>
+
+<!-- APPLICATION SEARCH AND FILTER -->
+<div class="application-filter-bar">
+
+    <input
+        type="search"
+        id="applicationSearch"
+        placeholder="Search company or job role..."
+        aria-label="Search applications"
+    >
+
+    <select id="applicationStatusFilter" aria-label="Filter applications by status">
+        <option value="All">All Statuses</option>
+        <option value="Applied">Applied</option>
+        <option value="Interview">Interview</option>
+        <option value="Selected">Selected</option>
+        <option value="Rejected">Rejected</option>
+    </select>
+
+    <button type="button" id="clearApplicationFilters" class="text-button">
+        Clear Filters
+    </button>
+
+</div>
+
+<div id="applicationList">
+
+        <p>Your applications will appear here.</p>
+    </div>
+
+</div>
+<!-- END APPLICATION TRACKER -->
+
+
+<!-- AI MOCK INTERVIEW -->
+<section class="dashboard-card mock-interview-card" id="mockInterviewSection">
+
+    <div class="card-heading">
+        <div>
+            <p class="card-label">PRACTICE WITH AI</p>
+            <h2>🎯 AI Mock Interview</h2>
+            <p>Practice interview questions and get personalized feedback from AI.</p>
+        </div>
+    </div>
+
+    <form id="mockInterviewForm" class="application-form">
+
+        <div class="form-group">
+            <label for="mockInterviewRole">Target Job Role</label>
+            <input
+                type="text"
+                id="mockInterviewRole"
+                placeholder="e.g. Frontend Developer Intern"
+                required
+                maxlength="100"
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="mockInterviewType">Interview Type</label>
+            <select id="mockInterviewType" required>
+                <option value="Mixed">Mixed — Technical + Behavioral</option>
+                <option value="Technical">Technical</option>
+                <option value="Behavioral">Behavioral</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="mockInterviewDifficulty">Difficulty</label>
+            <select id="mockInterviewDifficulty" required>
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
+            </select>
+        </div>
+
+        <button type="submit" class="primary-dashboard-button" id="startMockInterviewBtn">
+            Start Mock Interview →
+        </button>
+    </form>
+
+    <p id="mockInterviewMessage" role="status" aria-live="polite"></p>
+
+    <div id="mockInterviewWorkspace"></div>
+
+    <div class="card-heading" style="margin-top:24px;">
+        <div>
+            <p class="card-label">YOUR PREVIOUS SESSIONS</p>
+            <h3>Interview History</h3>
+        </div>
+        <button type="button" class="card-button" id="refreshMockInterviewHistory">
+            Refresh
+        </button>
+    </div>
+
+    <div id="mockInterviewHistory">
+        <p>Your saved interviews will appear here.</p>
+    </div>
+
+</section>
+<!-- END AI MOCK INTERVIEW -->
+
+       
+<!-- AI PORTFOLIO STUDIO -->
+<section class="dashboard-card build-agent-card portfolio-studio" id="buildAgentSection">
+
+    <!-- HEADER -->
+    <div class="build-agent-header">
+        <div class="build-agent-brand">
+            <div class="build-agent-icon">✦</div>
+            <div>
+                <p class="card-label">SKILLFORGE AI • CREATIVE STUDIO</p>
+                <h2>AI Portfolio Studio</h2>
+                <p class="build-agent-subtitle">
+                    Create, customize and launch your professional developer portfolio.
+                </p>
+            </div>
+        </div>
+
+        <span class="build-agent-badge">✦ AI POWERED</span>
+    </div>
+
+    <!-- HERO -->
+    <div class="build-agent-hero portfolio-studio-hero">
+        <div class="build-agent-orb">✧</div>
+        <p class="card-label">YOUR PERSONAL BRAND STARTS HERE</p>
+        <h3>Build a portfolio that gets you noticed.</h3>
+        <p>
+            Tell us about yourself. SkillForge AI will help you create
+            a professional portfolio that showcases your skills, projects
+            and achievements.
+        </p>
+    </div>
+
+    <!-- PORTFOLIO CREATION FORM -->
+    <form id="buildAgentForm" class="build-agent-form portfolio-form">
+
+        <div class="portfolio-form-heading">
+            <div>
+                <p class="card-label">STEP 01</p>
+                <h3>Personal Information</h3>
+                <p>Start with the details you want visitors to see.</p>
+            </div>
+        </div>
+
+        <div class="build-agent-form-row">
+            <div class="build-agent-field">
+                <label for="portfolioName">Full Name</label>
+                <input
+                    type="text"
+                    id="portfolioName"
+                    placeholder="e.g. Saksham Namdeo"
+                    maxlength="100"
+                    required
+                >
+            </div>
+
+            <div class="build-agent-field">
+                <label for="portfolioRole">Professional Role</label>
+                <input
+                    type="text"
+                    id="portfolioRole"
+                    placeholder="e.g. Frontend Developer"
+                    maxlength="100"
+                    required
+                >
+            </div>
+        </div>
+
+        <label for="buildProjectIdea">About Me</label>
+        <textarea
+            id="buildProjectIdea"
+            name="projectIdea"
+            rows="4"
+            maxlength="1500"
+            placeholder="Introduce yourself, your interests, your experience and your career goals..."
+            required
+        ></textarea>
+
+        <div class="portfolio-form-heading">
+            <div>
+                <p class="card-label">STEP 02</p>
+                <h3>Skills & Projects</h3>
+                <p>Showcase what you know and what you have built.</p>
+            </div>
+        </div>
+
+        <label for="portfolioSkills">Technical Skills</label>
+        <input
+            type="text"
+            id="portfolioSkills"
+            placeholder="HTML, CSS, JavaScript, C++, React..."
+            maxlength="500"
+        >
+
+        <label for="portfolioProjects">Your Projects</label>
+        <textarea
+            id="portfolioProjects"
+            rows="4"
+            maxlength="1500"
+            placeholder="Project name, what it does, technologies used and project link..."
+        ></textarea>
+
+        <div class="portfolio-form-heading">
+            <div>
+                <p class="card-label">STEP 03</p>
+                <h3>Social & Contact Links</h3>
+                <p>Let recruiters and visitors connect with you.</p>
+            </div>
+        </div>
+
+        <div class="build-agent-form-row">
+            <div class="build-agent-field">
+                <label for="portfolioGithub">GitHub URL</label>
+                <input
+                    type="url"
+                    id="portfolioGithub"
+                    placeholder="https://github.com/username"
+                >
+            </div>
+
+            <div class="build-agent-field">
+                <label for="portfolioLinkedin">LinkedIn URL</label>
+                <input
+                    type="url"
+                    id="portfolioLinkedin"
+                    placeholder="https://linkedin.com/in/username"
+                >
+            </div>
+        </div>
+
+        <label for="portfolioEmail">Contact Email</label>
+        <input
+            type="email"
+            id="portfolioEmail"
+            placeholder="you@example.com"
+        >
+
+        <div class="portfolio-form-heading">
+            <div>
+                <p class="card-label">STEP 04</p>
+                <h3>Choose Your Design</h3>
+                <p>Select the look and feel of your portfolio.</p>
+            </div>
+        </div>
+
+        <div class="portfolio-theme-grid">
+
+            <label class="portfolio-theme-option">
+                <input type="radio" name="portfolioTheme" value="modern-dark" checked>
+                <span class="portfolio-theme-preview theme-dark-preview">
+                    <span></span><span></span><span></span>
+                </span>
+                <strong>Modern Dark</strong>
+                <small>Elegant & minimal</small>
+            </label>
+
+            <label class="portfolio-theme-option">
+                <input type="radio" name="portfolioTheme" value="clean-light">
+                <span class="portfolio-theme-preview theme-light-preview">
+                    <span></span><span></span><span></span>
+                </span>
+                <strong>Clean Light</strong>
+                <small>Simple & professional</small>
+            </label>
+
+            <label class="portfolio-theme-option">
+                <input type="radio" name="portfolioTheme" value="creative">
+                <span class="portfolio-theme-preview theme-creative-preview">
+                    <span></span><span></span><span></span>
+                </span>
+                <strong>Creative</strong>
+                <small>Bold & expressive</small>
+            </label>
+        </div>
+
+        <!-- Existing backend-compatible fields -->
+        <div hidden>
+            <select id="buildProjectDays" name="duration">
+                <option value="30" selected>30 days</option>
+            </select>
+
+            <select id="buildProjectLevel" name="level">
+                <option value="beginner" selected>Beginner</option>
+            </select>
+
+            <input
+                type="text"
+                id="buildProjectTech"
+                name="technologies"
+                value="HTML, CSS, JavaScript"
+            >
+        </div>
+
+        <button
+            type="submit"
+            class="primary-dashboard-button build-agent-submit"
+            id="buildAgentSubmit"
+        >
+            ✦ Generate My Portfolio →
+        </button>
+
+        <p class="build-agent-note">
+            Your portfolio will be created in your personal workspace.
+            You can customize it and save your progress.
+        </p>
+
+    </form>
+
+    <!-- STATUS -->
+    <div
+        id="buildAgentStatus"
+        class="build-agent-status"
+        role="status"
+        aria-live="polite"
+        hidden
+    ></div>
+
+    <!-- PORTFOLIO WORKSPACE -->
+    <div id="buildAgentWorkspace" class="build-agent-workspace portfolio-workspace" hidden>
+
+        <div class="build-agent-workspace-heading">
+            <div>
+                <p class="card-label">YOUR PORTFOLIO WORKSPACE</p>
+                <h3 id="buildAgentProjectTitle">My Portfolio</h3>
+            </div>
+            <span id="buildAgentProgressLabel">0% complete</span>
+        </div>
+
+        <div
+            class="build-agent-progress-track"
+            role="progressbar"
+            aria-label="Portfolio progress"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="0"
+            id="buildAgentProgressBar"
+        >
+            <div id="buildAgentProgressFill"></div>
+        </div>
+
+       
+
+        <!-- PORTFOLIO SECTIONS -->
+        <div class="portfolio-sections-panel">
+            <p class="card-label">PORTFOLIO BUILDER</p>
+            <h3>Your Portfolio Sections</h3>
+            <p>Customize your portfolio section by section.</p>
+
+            <div class="portfolio-section-list">
+                <div class="portfolio-section-item">
+                    <span>01</span>
+                    <div>
+                        <strong>Hero / Introduction</strong>
+                        <small>Your name, role and introduction</small>
+                    </div>
+                    <span class="portfolio-section-status">Included</span>
+                </div>
+
+                <div class="portfolio-section-item">
+                    <span>02</span>
+                    <div>
+                        <strong>About Me</strong>
+                        <small>Your background and career goals</small>
+                    </div>
+                    <span class="portfolio-section-status">Included</span>
+                </div>
+
+                <div class="portfolio-section-item">
+                    <span>03</span>
+                    <div>
+                        <strong>Skills</strong>
+                        <small>Your technical expertise</small>
+                    </div>
+                    <span class="portfolio-section-status">Included</span>
+                </div>
+
+                <div class="portfolio-section-item">
+                    <span>04</span>
+                    <div>
+                        <strong>Projects</strong>
+                        <small>Your work and achievements</small>
+                    </div>
+                    <span class="portfolio-section-status">Included</span>
+                </div>
+
+                <div class="portfolio-section-item">
+                    <span>05</span>
+                    <div>
+                        <strong>Contact</strong>
+                        <small>Social links and contact details</small>
+                    </div>
+                    <span class="portfolio-section-status">Included</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI EDITOR -->
+        <div class="build-agent-code-area portfolio-ai-editor">
+
+            <div>
+                <p class="card-label">AI PORTFOLIO EDITOR</p>
+                <h3>Customize with AI</h3>
+                <p>
+                    Describe the changes you want. AI will update your existing
+                    portfolio while preserving its other sections.
+                </p>
+            </div>
+
+            <label for="buildAgentCodeRequest">
+                What would you like to change?
+            </label>
+
+            <textarea
+                id="buildAgentCodeRequest"
+                rows="4"
+                maxlength="2000"
+                placeholder="Example: Make my hero section more attractive, add smooth animations and improve the project cards..."
+            ></textarea>
+
+            <button
+                type="button"
+                class="primary-dashboard-button"
+                id="buildAgentCodeButton"
+            >
+                ✦ Improve My Portfolio →
+            </button>
+
+            <pre id="buildAgentCodeOutput" class="build-agent-code-output" hidden><code id="buildAgentCode"></code></pre>
+        </div>
+
+        <!-- PREVIEW -->
+        <div class="portfolio-preview-area">
+
+            <div class="portfolio-preview-heading">
+                <div>
+                    <p class="card-label">LIVE PREVIEW</p>
+                    <h3>Your Website</h3>
+                    <p>See how your portfolio looks before publishing.</p>
+                </div>
+
+                <div class="build-agent-preview-actions">
+                    <button type="button" id="buildAgentRunButton">
+                        ▶ Preview
+                    </button>
+
+                    <button type="button" id="buildAgentStopButton">
+                        ■ Stop
+                    </button>
+                </div>
+            </div>
+
+            <div id="buildAgentPreviewContainer" hidden>
+                <iframe
+                    id="buildAgentPreview"
+                    title="Portfolio Website Preview"
+                    sandbox="allow-scripts"
+                    style="display:block;width:100%;height:550px;border:1px solid #444;border-radius:12px;background:#fff;"
+                ></iframe>
+            </div>
+        </div>
+
+        <!-- EXISTING TASK TRACKING -->
+      
+<!-- PORTFOLIO TASK TRACKING -->
+<div class="portfolio-tasks-panel">
+    <p class="card-label">YOUR ACTION PLAN</p>
+    <h3>Portfolio Tasks</h3>
+    <p>Complete these tasks to track your portfolio progress.</p>
+
+    <div id="buildAgentTasks"></div>
+</div>
+<!-- END PORTFOLIO TASK TRACKING -->
+    </div>
+
+</section>
+<!-- END AI PORTFOLIO STUDIO -->
+
+        <!-- AI ASSISTANT -->
+
+        <!-- AI ASSISTANT -->
+        <section class="ai-assistant-banner">
+
+            <div class="dashboard-card ai-assistant-card">
+
+                <div class="card-heading">
+                    <div>
+                        <p class="card-label">AI CAREER ASSISTANT</p>
+                        <h2>Ask SkillForge AI 🤖</h2>
+                    </div>
+
+                    <span class="assistant-tag">✨ POWERED BY AI</span>
+                </div>
+
+                <p class="ai-assistant-description">
+                    Ask questions about skills, careers, projects, internships and learning.
+                </p>
+
+                <div class="ai-chat-box" id="aiChatBox">
+                    <div class="ai-message">
+                        👋 Hi! I'm SkillForge AI. Ask me anything about your career.
+                    </div>
+                </div>
+
+                <div class="ai-input-area">
+                    <input
+                        type="text"
+                        id="aiQuestion"
+                        placeholder="e.g. What should I learn after JavaScript?"
+                    >
+
+                    <button
+                        type="button"
+                        class="primary-dashboard-button"
+                        id="askAIButton"
+                    >
+                        Ask AI →
+                    </button>
+                </div>
+
+            </div>
+
+        </section>
+
+<!-- CAMERA VERIFICATION SECTION -->
+<section id="cameraVerificationSection" class="dashboard-card camera-card">
+
+    <div class="card-heading">
+        <div>
+            <p class="card-label">PROFILE PHOTO</p>
+            <h2>Camera Verification</h2>
+            <p>Capture and save your profile photo.</p>
+        </div>
+    </div>
+
+    <!-- CAMERA PLACEHOLDER -->
+    <div id="cameraPlaceholder">
+        <p>Camera is not started. Give permission and click Start Camera.</p>
+    </div>
+
+    <!-- LIVE CAMERA -->
+    <video
+        id="cameraVideo"
+        autoplay
+        playsinline
+        muted
+        style="display: none; width: 100%; max-width: 420px; border-radius: 12px;"
+    ></video>
+
+    <p id="cameraStatus" role="status" aria-live="polite">
+        Camera not started.
+    </p>
+
+    <!-- CAMERA CONSENT -->
+    <label class="camera-consent">
+        <input type="checkbox" id="cameraConsent">
+        I give permission to use my camera to capture a profile photo.
+    </label>
+
+    <!-- CAMERA CONTROLS -->
+    <div class="camera-actions">
+
+        <button
+            class="primary-dashboard-button"
+            id="startCameraBtn"
+            type="button"
+        >
+            Start Camera
+        </button>
+
+        <button
+            class="camera-stop-button"
+            id="stopCameraBtn"
+            type="button"
+        >
+            Stop Camera
+        </button>
+
+    </div>
+
+    <!-- PHOTO CAPTURE -->
+    <div class="camera-photo-actions">
+
+        <button
+            class="primary-dashboard-button"
+            id="capturePhotoBtn"
+            type="button"
+            style="display: none;"
+        >
+            Capture Photo
+        </button>
+
+        <!-- PHOTO PREVIEW -->
+        <div id="capturedPhotoContainer" style="display: none;">
+
+            <h3>Photo Preview</h3>
+
+            <img
+                id="capturedPhoto"
+                alt="Captured profile photo"
+                style="width: 180px; max-width: 100%; border-radius: 12px;"
+            >
+
+            <div class="camera-actions">
+
+                <button
+                    class="primary-dashboard-button"
+                    id="retakePhotoBtn"
+                    type="button"
+                >
+                    Retake Photo
+                </button>
+
+                <button
+                    class="primary-dashboard-button"
+                    id="saveProfilePhotoBtn"
+                    type="button"
+                >
+                    Accept & Save Photo
+                </button>
+
+            </div>
+
+            <p id="profilePhotoMessage" role="status" aria-live="polite"></p>
+
+        </div>
+
+        <!-- DELETE SAVED PHOTO -->
+        <button
+            class="secondary-dashboard-button"
+            id="deleteProfilePhotoBtn"
+            type="button"
+        >
+            Delete Profile Photo
+        </button>
+
+        <p id="deleteProfilePhotoMessage" role="status" aria-live="polite"></p>
+
+        <canvas id="cameraCanvas" style="display: none;"></canvas>
+
+    </div>
+
+</section>
+<!-- END CAMERA VERIFICATION SECTION -->
+
+        
+
+<!-- SETTINGS SECTION -->
+<section id="settingsSection" class="dashboard-card settings-section" hidden>
+    <div class="card-heading">
+        <div>
+            <p class="card-label">PREFERENCES</p>
+            <h2>Settings</h2>
+            <p>Manage your dashboard preferences.</p>
+        </div>
+    </div>
+
+    <div class="settings-group">
+        <h3>Account</h3>
+        <div class="settings-value">
+            <span>Name</span>
+            <strong id="settingsUserName">Loading...</strong>
+        </div>
+        <div class="settings-value">
+            <span>Email</span>
+            <strong id="settingsUserEmail">Loading...</strong>
+        </div>
+    </div>
+
+    <div class="settings-group">
+        <h3>Appearance</h3>
+        <label for="settingsTheme">Dashboard theme</label>
+        <select id="settingsTheme">
+            <option value="dark">Dark</option>
+            <option value="light">Light</option>
+        </select>
+        <p class="settings-help">Choose your preferred theme.</p>
+    </div>
+
+    <div class="settings-group">
+        <h3>Session</h3>
+        <button type="button" class="text-button" id="settingsLogoutBtn">
+            Log out
+        </button>
+    </div>
+
+    <p id="settingsMessage" role="status"></p>
+</section>
+
+
+        <!-- FOOTER -->
+        <footer class="dashboard-footer">
+            <p>© 2026 SkillForge AI</p>
+            <p>Build Skills. Build Your Future. 🚀</p>
+        </footer>
+
+    </main>
+
+
+    <!-- EXISTING SITE SCRIPT -->
+    <script src="script.js"></script>
+
+    <!-- LOAD SAVED USER DETAILS -->
+    <script>
+        try {
+            const savedUser = localStorage.getItem("skillforgeUser");
+
+            if (savedUser) {
+                const user = JSON.parse(savedUser);
+
+                const userName = document.getElementById("userName");
+                if (userName) {
+                    userName.textContent = user.name || "Student";
+                }
+
+                const profileName = document.getElementById("profileCardName");
+                if (profileName && user.name) {
+                    profileName.textContent = user.name;
+                }
+
+                const profileGoal = document.getElementById("profileCardGoal");
+                if (profileGoal && user.careerGoal) {
+                    profileGoal.textContent = user.careerGoal;
+                }
+
+                const avatar = document.getElementById("profileAvatar");
+                if (avatar && user.name) {
+                    avatar.textContent = user.name.charAt(0).toUpperCase();
+                }
+            }
+        } catch (error) {
+            console.error("Could not load saved user details:", error);
+        }
+    </script>
+
+    <script src="dashboard.js"></script>
+ 
+<script>
+document.addEventListener("DOMContentLoaded", async function () {
+    const filter = document.getElementById("opportunityCategoryFilter");
+    const list = document.querySelector(".opportunity-list");
+
+    if (!filter || !list) {
+        console.error("Opportunity filter or list not found.");
+        return;
+    }
+
+    const API_URL = "http://localhost:5000/api/opportunities";
+
+    list.innerHTML = "<p>Loading opportunities...</p>";
+
+    try {
+        const response = await fetch(API_URL);
+
+        if (!response.ok) {
+            throw new Error("API returned status " + response.status);
+        }
+
+        const data = await response.json();
+
+        if (!data.success || !Array.isArray(data.opportunities)) {
+            throw new Error("Invalid opportunities API response.");
+        }
+
+        const categoryNames = {
+            web: "Web Development",
+            ai: "AI / ML Engineering",
+            cyber: "Cybersecurity",
+            data: "Data Science",
+            cloud: "Cloud & DevOps",
+            app: "App Development",
+            software: "Software Engineering"
+        };
+        
+const searchInput = document.getElementById("opportunitySearch");
+
+
+        function escapeHTML(value) {
+            return String(value ?? "").replace(/[&<>"']/g, function (char) {
+                return {
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': "&quot;",
+                    "'": "&#39;"
+                }[char];
+            });
+        }
+
+        function renderOpportunities() {
+            
+const selected = filter.value;
+const searchTerm = searchInput
+    ? searchInput.value.trim().toLowerCase()
+    : "";
+
+const filtered = data.opportunities.filter(function (item) {
+    const matchesCategory =
+        selected === "all" || item.category === selected;
+
+    const searchableText = [
+        item.title,
+        item.company,
+        item.description,
+        item.category,
+        item.type
+    ].join(" ").toLowerCase();
+
+    const matchesSearch = searchableText.includes(searchTerm);
+
+    return matchesCategory && matchesSearch;
+});
+
+
+
+            if (filtered.length === 0) {
+                list.innerHTML = "<p>No opportunities found for this category.</p>";
+                return;
+            }
+
+            list.innerHTML = filtered.map(function (item) {
+                let safeLink = "#";
+
+                try {
+                    const parsedURL = new URL(item.link);
+
+                    if (parsedURL.protocol === "https:" ||
+                        parsedURL.protocol === "http:") {
+                        safeLink = parsedURL.href;
+                    }
+                } catch (error) {
+                    console.warn("Invalid opportunity link:", item.title);
+                }
+
+                return `
+                  <div class="opportunity"
+     data-category="${escapeHTML(item.category)}"
+     data-opportunity-id="${escapeHTML(item._id)}"
+     data-company="${escapeHTML(item.company)}"
+     data-role="${escapeHTML(item.title)}">
+                        <div class="company-logo">${escapeHTML(item.company.slice(0, 1).toUpperCase())}</div>
+                        <div class="opportunity-info">
+                            <strong>${escapeHTML(item.title)}</strong>
+                            <p>${escapeHTML(categoryNames[item.category] || item.category)} • ${escapeHTML(item.type || "Opportunity")}</p>
+                            <p>${escapeHTML(item.description || "")}</p>
+                            <a href="${escapeHTML(safeLink)}"
+                               target="_blank"
+                               rel="noopener noreferrer">
+                                Explore Opportunity ↗
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        filter.addEventListener("change", renderOpportunities);
+        if (searchInput) {
+    searchInput.addEventListener("input", renderOpportunities);
+}
+        renderOpportunities();
+
+        console.log("Opportunities loaded from MongoDB:", data.count);
+
+    } catch (error) {
+        console.error("Could not load opportunities:", error);
+
+        list.innerHTML = `
+            <p role="alert">
+                Opportunities could not be loaded.
+                Please make sure the backend server is running and refresh.
+            </p>
+        `;
+    }
+});
+
+</script>
+<script src="build-agent.js"></script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const settingsLink = document.getElementById("settingsNavLink");
+    const settingsSection = document.getElementById("settingsSection");
+
+    if (!settingsLink || !settingsSection) {
+        console.error("Settings link or section not found.");
+        return;
+    }
+
+    settingsLink.addEventListener("click", function (event) {
+        event.preventDefault();
+
+        settingsSection.hidden = false;
+        settingsSection.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+        console.log("Settings section opened.");
+    });
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // 1. Load account details
+    try {
+        const savedUser = localStorage.getItem("skillforgeUser");
+        const user = savedUser ? JSON.parse(savedUser) : null;
+
+        const nameElement = document.getElementById("settingsUserName");
+        const emailElement = document.getElementById("settingsUserEmail");
+
+        if (nameElement) {
+            nameElement.textContent = user?.name || "Not available";
+        }
+
+        if (emailElement) {
+            emailElement.textContent = user?.email || "Not available";
+        }
+    } catch (error) {
+        console.error("Could not load Settings account details:", error);
+    }
+
+    // 2. Apply and save theme preference
+    const themeSelect = document.getElementById("settingsTheme");
+    if (!themeSelect) return;
+
+    function applyTheme(theme) {
+        const selectedTheme = theme === "light" ? "light" : "dark";
+
+        document.documentElement.dataset.theme = selectedTheme;
+        document.body.classList.toggle(
+            "light-theme",
+            selectedTheme === "light"
+        );
+
+        themeSelect.value = selectedTheme;
+        localStorage.setItem("skillforgeTheme", selectedTheme);
+    }
+
+    applyTheme(localStorage.getItem("skillforgeTheme") || "dark");
+
+    themeSelect.addEventListener("change", function () {
+        applyTheme(themeSelect.value);
+    });
+});
+</script>
+
+</body>
+</html>
