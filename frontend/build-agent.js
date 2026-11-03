@@ -47,6 +47,9 @@ function initBuildAgent() {
     const runPreviewButton = document.getElementById("buildAgentRunButton");
     const stopPreviewButton = document.getElementById("buildAgentStopButton");
     const previewContainer = document.getElementById("buildAgentPreviewContainer");
+    const downloadPortfolioButton = document.getElementById(
+    "buildAgentDownloadButton"
+);
 
     let previewFrame = document.getElementById("buildAgentPreview");
 
@@ -63,7 +66,7 @@ function initBuildAgent() {
         console.warn("Portfolio Studio: buildAgentTasks element is missing.");
     }
 
-    const API_URL = "https://skillforge-api-45.onrender.com/api/build-agent/projects";
+ const API_URL = "https://skillforge-api-45.onrender.com/api/build-agent/projects";
 
     let currentProject = null;
     let isGenerating = false;
@@ -364,6 +367,182 @@ Return a complete working HTML document with embedded CSS and JavaScript.
 
         return source;
     }
+    function getPortfolioOwnerEmail() {
+    const emailFromInput = portfolioEmailInput?.value.trim();
+
+    if (emailFromInput) {
+        return emailFromInput;
+    }
+
+    const savedIdea = currentProject?.idea || "";
+    const emailMatch = savedIdea.match(
+        /Email:\s*([^\r\n]+)/i
+    );
+
+    const savedEmail = emailMatch?.[1]?.trim();
+
+    if (
+        savedEmail &&
+        savedEmail.toLowerCase() !== "not provided" &&
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(savedEmail)
+    ) {
+        return savedEmail;
+    }
+
+    return "";
+}
+
+function makeContactFormsWork(html) {
+    const ownerEmail = getPortfolioOwnerEmail();
+
+    const contactStyles = `
+<style id="skillforge-contact-styles">
+.contact-form {
+    display: grid;
+    gap: 18px;
+    padding: clamp(20px, 4vw, 32px);
+    border: 1px solid rgba(139, 92, 246, 0.25);
+    border-radius: 20px;
+    background: rgba(127, 127, 127, 0.06);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+}
+
+.contact-form .form-group {
+    display: grid;
+    gap: 8px;
+}
+
+.contact-form label {
+    font-size: 14px;
+    font-weight: 600;
+    color: inherit;
+}
+
+.contact-form .form-control {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 48px;
+    padding: 13px 15px;
+    border: 1px solid rgba(127, 127, 127, 0.3);
+    border-radius: 12px;
+    background: rgba(127, 127, 127, 0.07);
+    color: inherit;
+    font: inherit;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.contact-form textarea.form-control {
+    min-height: 140px;
+    resize: vertical;
+}
+
+.contact-form .form-control:focus {
+    outline: none;
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.13);
+}
+
+.contact-form button[type="submit"] {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    min-height: 50px;
+    padding: 13px 20px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #8b5cf6, #5b3cc4);
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.contact-form button[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(124, 92, 246, 0.25);
+}
+
+@media (max-width: 600px) {
+    .contact-form {
+        padding: 18px;
+        border-radius: 16px;
+    }
+}
+</style>`;
+
+    const contactScript = `
+<script id="skillforge-contact-handler">
+(function () {
+    const ownerEmail = ${JSON.stringify(ownerEmail)};
+
+    document.querySelectorAll("form").forEach(function (form) {
+        const messageField = form.querySelector(
+            "#message, textarea"
+        );
+
+        if (!messageField) return;
+
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const nameField = form.querySelector(
+                "#name, input[type='text']"
+            );
+
+            const emailField = form.querySelector(
+                "#email, input[type='email']"
+            );
+
+            const name = nameField?.value.trim() || "";
+            const visitorEmail = emailField?.value.trim() || "";
+            const message = messageField.value.trim();
+
+            if (!message) {
+                alert("Please enter your message.");
+                return;
+            }
+
+            if (!ownerEmail) {
+                alert(
+                    "Contact email is not configured. Please add your email in Portfolio Studio."
+                );
+                return;
+            }
+
+            const subject = encodeURIComponent(
+                "Portfolio Contact Message" +
+                (name ? " from " + name : "")
+            );
+
+            const body = encodeURIComponent(
+                "Name: " + name +
+                "\\nEmail: " + visitorEmail +
+                "\\n\\nMessage:\\n" + message
+            );
+
+            const mailtoURL =
+                "mailto:" + ownerEmail +
+                "?subject=" + subject +
+                "&body=" + body;
+
+            window.location.href = mailtoURL;
+        });
+    });
+})();
+</script>`;
+
+    html = html.replace(
+        /<\/head\s*>/i,
+        contactStyles + "</head>"
+    );
+
+    return html.replace(
+        /<\/body\s*>/i,
+        contactScript + "</body>"
+    );
+}
+
 
     function runPreview() {
         const rawCode = codeElement?.textContent?.trim();
@@ -380,9 +559,10 @@ Return a complete working HTML document with embedded CSS and JavaScript.
 
         let html;
 
-        try {
-            html = extractHTML(rawCode);
-        } catch (error) {
+       try {
+    html = extractHTML(rawCode);
+    html = makeContactFormsWork(html);
+} catch (error) {
             setStatus(error.message, true);
             return;
         }
@@ -421,7 +601,7 @@ Return a complete working HTML document with embedded CSS and JavaScript.
 
         freshFrame.id = "buildAgentPreview";
         freshFrame.title = "Portfolio Website Preview";
-        freshFrame.setAttribute("sandbox", "allow-scripts");
+      freshFrame.setAttribute("sandbox", "allow-scripts allow-popups");
 
         freshFrame.style.cssText = `
             display: block;
@@ -456,7 +636,44 @@ Return a complete working HTML document with embedded CSS and JavaScript.
             });
         });
     }
+function downloadPortfolioHTML() {
+    const rawCode =
+        currentProject?.generatedCode ||
+        codeElement?.textContent?.trim() ||
+        "";
 
+    if (!rawCode) {
+        setStatus("Generate your portfolio first, then download it.", true);
+        return;
+    }
+
+    let html;
+try {
+    html = extractHTML(rawCode);
+    html = makeContactFormsWork(html);
+} catch (error) {
+        setStatus(error.message, true);
+        return;
+    }
+
+    const blob = new Blob([html], {
+        type: "text/html;charset=utf-8"
+    });
+
+    const downloadUrl = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = downloadUrl;
+    link.download = "my-portfolio.html";
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+
+    setStatus("Portfolio HTML downloaded successfully.");
+}
     // ==========================================
     // 8. TASK RENDERING
     // ==========================================
@@ -900,7 +1117,12 @@ if (validThemes.includes(savedTheme)) {
             setStatus("Portfolio preview stopped.");
         });
     }
-
+if (downloadPortfolioButton) {
+    downloadPortfolioButton.addEventListener(
+        "click",
+        downloadPortfolioHTML
+    );
+}
     // ==========================================
     // 14. LOAD SAVED PROJECT FROM MONGODB
     // ==========================================

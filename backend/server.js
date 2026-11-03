@@ -195,7 +195,34 @@ const apiLimiter = rateLimit({
         message: "Too many requests. Please try again later."
     }
 });
+// Prevent simultaneous duplicate Portfolio AI requests.
+const portfolioGenerationLocks = new Set();
+function preventDuplicatePortfolioGeneration(req, res, next) {
+    const lockKey = `${req.userId}:${req.params.projectId}`;
 
+    if (portfolioGenerationLocks.has(lockKey)) {
+        return res.status(409).json({
+            success: false,
+            message: "Portfolio generation is already in progress. Please wait."
+        });
+    }
+
+    portfolioGenerationLocks.add(lockKey);
+
+    let released = false;
+
+    const releaseLock = () => {
+        if (released) return;
+
+        released = true;
+        portfolioGenerationLocks.delete(lockKey);
+    };
+
+    res.once("finish", releaseLock);
+    res.once("close", releaseLock);
+
+    next();
+}
 const authLimiter = rateLimit({
    
     windowMs: 15 * 60 * 1000,
@@ -3311,10 +3338,10 @@ app.patch(
     }
 );
 
-
 app.post(
     "/api/build-agent/projects/:projectId/code",
     authenticateToken,
+    preventDuplicatePortfolioGeneration,
     async (req, res) => {
         try {
             const { projectId } = req.params;

@@ -8789,3 +8789,32 @@ body.light-theme #buildAgentSection .build-agent-task-content p {
         padding: 11px 15px;
     }
 }
+/* PORTFOLIO DOWNLOAD BUTTON */
+#buildAgentSection #buildAgentDownloadButton {
+    min-width: 130px;
+    padding: 11px 18px;
+    border: 1px solid rgba(155, 131, 255, 0.55);
+    border-radius: 10px;
+    background: linear-gradient(135deg, #7652e8, #5935c5);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#buildAgentSection #buildAgentDownloadButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 20px rgba(118, 82, 232, 0.3);
+}
+
+#buildAgentSection #buildAgentDownloadButton:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 420px) {
+    #buildAgentSection #buildAgentDownloadButton {
+        flex: 1 1 100px;
+        min-width: 0;
+    }
+}
