@@ -1897,6 +1897,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const captureButton = document.getElementById("capturePhotoBtn");
     const photoContainer = document.getElementById("capturedPhotoContainer");
     const capturedPhoto = document.getElementById("capturedPhoto");
+    const galleryButton = document.getElementById("chooseGalleryPhotoBtn");
+const galleryInput = document.getElementById("galleryPhotoInput");
 
     const retakeButton = document.getElementById("retakePhotoBtn");
     const saveButton = document.getElementById("saveProfilePhotoBtn");
@@ -1916,6 +1918,8 @@ const deletePhotoMessage = document.getElementById("deleteProfilePhotoMessage");
         !captureButton ||
         !photoContainer ||
         !capturedPhoto ||
+                !galleryButton ||
+        !galleryInput ||
         !retakeButton ||
         !saveButton ||
 !photoMessage ||
@@ -2025,6 +2029,66 @@ const deletePhotoMessage = document.getElementById("deleteProfilePhotoMessage");
         }
 
     });
+    // ================= CHOOSE PHOTO FROM GALLERY =================
+
+galleryButton.addEventListener("click", () => {
+    galleryInput.click();
+});
+
+galleryInput.addEventListener("change", () => {
+    const file = galleryInput.files[0];
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+        photoMessage.textContent = "Please select a valid image.";
+        galleryInput.value = "";
+        return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+        photoMessage.textContent = "Please select an image smaller than 5 MB.";
+        galleryInput.value = "";
+        return;
+    }
+
+    const imageUrl = URL.createObjectURL(file);
+    const image = new Image();
+
+    image.onload = () => {
+        canvas.width = image.naturalWidth;
+        canvas.height = image.naturalHeight;
+
+        const context = canvas.getContext("2d");
+
+        if (!context) {
+            photoMessage.textContent = "Could not process selected image.";
+            URL.revokeObjectURL(imageUrl);
+            return;
+        }
+
+        context.drawImage(image, 0, 0);
+
+        capturedPhoto.src = canvas.toDataURL("image/jpeg", 0.9);
+
+        photoContainer.style.display = "block";
+        captureButton.style.display = "none";
+        video.style.display = "none";
+        placeholder.style.display = "none";
+
+        status.textContent = "Gallery Photo Selected";
+        photoMessage.textContent = "Photo ready. Click Accept & Save Photo.";
+
+        URL.revokeObjectURL(imageUrl);
+    };
+
+    image.onerror = () => {
+        photoMessage.textContent = "Could not open this image.";
+        URL.revokeObjectURL(imageUrl);
+    };
+
+    image.src = imageUrl;
+});
 
     // ================= CAPTURE PHOTO =================
 
