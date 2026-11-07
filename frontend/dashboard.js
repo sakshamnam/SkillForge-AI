@@ -142,7 +142,16 @@ const analyzeButton = document.getElementById("analyzeSkillsBtn");
 
 if (analyzeButton) {
 
-    const runSkillAnalysis = async () => {
+   let isAnalyzingSkills = false;
+
+const runSkillAnalysis = async () => {
+    if (isAnalyzingSkills) {
+        console.log("Skill analysis already running.");
+        return;
+    }
+
+    isAnalyzingSkills = true;
+    analyzeButton.disabled = true;
         const savedUser = localStorage.getItem("skillforgeUser");
         const user = savedUser ? JSON.parse(savedUser) : {};
 
@@ -307,7 +316,11 @@ generatePersonalizedRoadmap(data.missingSkills, data.careerGoal);
             analyzeButton.textContent = "Analyze My Skills →";
 
             alert("Could not connect to SkillForge AI backend.");
-        }
+            } finally {
+            isAnalyzingSkills = false;
+            analyzeButton.disabled = false;
+        } 
+        
     };
 
     window.runSkillAnalysis = runSkillAnalysis;
@@ -357,33 +370,49 @@ async function generatePersonalizedRoadmap(missingSkills, careerGoal) {
             analyzeButton.parentElement.appendChild(roadmapBox);
         }
 
-        roadmapBox.innerHTML = `
-            <div style="margin-top:20px;">
-                <h3>🚀 Your Personalized Roadmap</h3>
+      
+roadmapBox.innerHTML = `
+    <div class="personalized-roadmap-content">
+        <h3 class="personalized-roadmap-title">
+            🚀 Your Personalized Roadmap
+        </h3>
 
-                ${data.roadmap.map(item => `
-                    <div style="margin:12px 0;">
-                     <div>
-   <strong>
-    ${item.step}. ${item.skill}
-</strong>
-
-<p>
-    ${item.status} • ${item.duration}
-</p>
-
-<button
-    class="roadmap-start-btn"
-    data-skill="${item.skill}"
->
-    Start Learning →
-</button>
-</div>
+        <div class="personalized-roadmap-list">
+            ${data.roadmap.map(item => `
+                <div class="personalized-roadmap-item">
+                    <div class="personalized-step-number">
+                        ${item.step}
                     </div>
-                `).join("")}
 
-            </div>
-        `;
+                    <div class="personalized-step-content">
+                        <strong class="personalized-step-skill">
+                            ${item.skill}
+                        </strong>
+
+                        <div class="personalized-step-meta">
+                            <span class="personalized-step-status">
+                                ${item.status}
+                            </span>
+
+                            <span class="personalized-step-duration">
+                                ${item.duration}
+                            </span>
+                        </div>
+
+                        <button
+                            class="roadmap-start-btn"
+                            data-skill="${item.skill}"
+                            type="button"
+                        >
+                            Start Learning →
+                        </button>
+                    </div>
+                </div>
+            `).join("")}
+        </div>
+    </div>
+`;
+
 
     } catch (error) {
 
@@ -408,7 +437,6 @@ function getRoadmapUser() {
 }
 
 // ================= UPDATE PROGRESS PERCENTAGE =================
-
 function updateRoadmapProgress() {
     const buttons = [
         ...document.querySelectorAll(".roadmap-start-btn")
@@ -427,7 +455,8 @@ function updateRoadmapProgress() {
     }
 
     const completed = buttons.filter(
-        button => button.disabled
+        button => button.disabled &&
+        button.textContent.includes("Completed")
     ).length;
 
     const percentage = Math.round(
@@ -442,7 +471,6 @@ function updateRoadmapProgress() {
         progressStat.textContent = percentage + "%";
     }
 }
-
 // ================= LOAD PROGRESS FROM MONGODB =================
 
 async function loadRoadmapProgressFromDatabase() {
@@ -586,7 +614,9 @@ document.addEventListener("DOMContentLoaded", () => {
     loadRoadmapProgressFromDatabase();
     updateRoadmapProgress();
 });
-
+window.addEventListener("pageshow", () => {
+    loadRoadmapProgressFromDatabase();
+});
 /* ================= CAREER PROFILE ================= */
 
 async function loadCareerProfile() {
@@ -1466,21 +1496,7 @@ function updateDashboardStats() {
         }
     }
 
-    // Learning Progress: completed roadmap buttons
-    const progressStat = document.getElementById("learningProgressStat");
-    const roadmapButtons = document.querySelectorAll(".roadmap-start-btn");
 
-    if (progressStat && roadmapButtons.length > 0) {
-        const completed = Array.from(roadmapButtons).filter(
-            button => button.disabled
-        ).length;
-
-        const progress = Math.round(
-            (completed / roadmapButtons.length) * 100
-        );
-
-        progressStat.textContent = `${progress}%`;
-    }
 }
 
     // Load skills from MongoDB
@@ -3517,34 +3533,54 @@ if (rejectedStat) {
 
     // The opportunities list is rendered asynchronously by dashboard.html.
     // Watch for new cards and add a Save button to each API-rendered card.
-    const observer = new MutationObserver(() => {
-        list.querySelectorAll(".opportunity").forEach(card => {
-            const link = card.querySelector(".opportunity-info a");
-            if (!link || card.querySelector(".save-opportunity-btn")) return;
+// Add Save buttons only when new opportunity cards appear.
+function addOpportunitySaveButtons() {
+    let buttonsAdded = false;
 
-            // Only add buttons to cards with a real MongoDB opportunity ID.
-            const opportunityId = card.dataset.opportunityId;
-            if (!opportunityId) return;
+    list.querySelectorAll(".opportunity").forEach(card => {
+        const link = card.querySelector(".opportunity-info a");
 
-            const button = document.createElement("button");
-            button.type = "button";
-            button.className = "save-opportunity-btn card-button";
-            button.dataset.opportunityId = opportunityId;
-            button.dataset.saved = "false";
-            button.textContent = "☆ Save Opportunity";
-            button.style.cssText =
-                "display:block;margin-top:12px;padding:9px 12px;" +
-                "border-radius:8px;cursor:pointer;";
+        if (!link || card.querySelector(".save-opportunity-btn")) {
+            return;
+        }
 
-            link.insertAdjacentElement("afterend", button);
-        });
+        const opportunityId = card.dataset.opportunityId;
+        if (!opportunityId) return;
 
-        refreshSaveButtons();
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "save-opportunity-btn card-button";
+        button.dataset.opportunityId = opportunityId;
+        button.dataset.saved = "false";
+        button.textContent = "☆ Save Opportunity";
+
+        button.style.cssText =
+            "display:block;margin-top:12px;padding:9px 12px;" +
+            "border-radius:8px;cursor:pointer;";
+
+        link.insertAdjacentElement("afterend", button);
+        buttonsAdded = true;
     });
 
-    observer.observe(list, { childList: true, subtree: true });
+    return buttonsAdded;
+}
 
-    refreshSaveButtons();
+const observer = new MutationObserver(() => {
+    const buttonsAdded = addOpportunitySaveButtons();
+
+    if (buttonsAdded) {
+        refreshSaveButtons();
+    }
+});
+
+observer.observe(list, {
+    childList: true,
+    subtree: true
+});
+
+// Initial setup: add buttons and fetch saved status once.
+addOpportunitySaveButtons();
+refreshSaveButtons();
 })();
 
 /* ==========================================
@@ -3688,3 +3724,303 @@ alert("Logout successful. Redirecting to login...");
         window.location.href = "http://localhost:5500/SkillForge-AI/frontend/login.html";
     });
 });
+
+// ==========================================
+// SKILLFORGE AI — NEON PARTICLE BACKGROUND
+// ==========================================
+
+document.addEventListener("DOMContentLoaded", () => {
+    if (document.querySelector(".sf-effects")) return;
+
+    const effects = document.createElement("div");
+    effects.className = "sf-effects";
+    effects.setAttribute("aria-hidden", "true");
+
+    const particleCount = window.matchMedia("(max-width: 600px)").matches
+        ? 18
+        : 35;
+
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement("span");
+        particle.className = "sf-particle";
+
+        const size = Math.random() * 3 + 1;
+
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${Math.random() * 100}%`;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.animationDuration = `${8 + Math.random() * 12}s`;
+        particle.style.animationDelay = `${Math.random() * -15}s`;
+
+        effects.appendChild(particle);
+    }
+
+    document.body.prepend(effects);
+});
+// ==========================================
+// SKILLFORGE AI — REAL USER GROWTH ANALYTICS
+// ==========================================
+
+(() => {
+    const analyticsSection = document.getElementById("analyticsSection");
+
+    if (!analyticsSection) return;
+
+    const refreshButton = document.getElementById("refreshAnalyticsBtn");
+    const chart = document.getElementById("growthChart");
+    const message = document.getElementById("growthAnalyticsMessage");
+
+    const API_BASE = "https://skillforge-api-45.onrender.com";
+
+    const statElements = {
+        skills: document.getElementById("growthSkillsCount"),
+        learning: document.getElementById("growthLearningCount"),
+        applications: document.getElementById("growthApplicationsCount"),
+        interviews: document.getElementById("growthInterviewsCount")
+    };
+
+    let isLoading = false;
+
+    async function fetchAnalyticsArray(endpoint, property) {
+        const response = await fetch(`${API_BASE}${endpoint}`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem("skillforgeToken")}`,
+                "Content-Type": "application/json"
+            },
+            cache: "no-store"
+        });
+
+        if (!response.ok) {
+            throw new Error(`Request failed (${response.status})`);
+        }
+
+        const data = await response.json();
+
+        if (!Array.isArray(data[property])) {
+            throw new Error(`Invalid ${property} response`);
+        }
+
+        return data[property];
+    }
+
+    function renderGrowthChart(metrics) {
+        const chartLabels = [
+            "Skills",
+            "Completed",
+            "Applications",
+            "Interviews"
+        ];
+
+        const availableValues = metrics
+            .filter(item => item.value !== null)
+            .map(item => item.value);
+
+        const maxValue = Math.max(1, ...availableValues);
+
+        const barPositions = [75, 255, 435, 615];
+        const barWidth = 70;
+        const chartBottom = 160;
+        const maxBarHeight = 115;
+
+        const bars = metrics.map((item, index) => {
+            const x = barPositions[index];
+
+            if (item.value === null) {
+                return `
+                    <rect
+                        x="${x}"
+                        y="${chartBottom - 5}"
+                        width="${barWidth}"
+                        height="5"
+                        rx="5"
+                        class="sf-growth-bar sf-growth-bar-unavailable"
+                    />
+                    <text x="${x + 35}" y="185"
+                        text-anchor="middle"
+                        class="sf-chart-label">
+                        Unavailable
+                    </text>
+                `;
+            }
+
+            const barHeight = item.value === 0
+                ? 3
+                : Math.max(5, (item.value / maxValue) * maxBarHeight);
+
+            const y = chartBottom - barHeight;
+
+            return `
+                <rect
+                    x="${x}"
+                    y="${y}"
+                    width="${barWidth}"
+                    height="${barHeight}"
+                    rx="7"
+                    class="sf-growth-bar"
+                    style="animation-delay: ${index * 120}ms"
+                />
+                <text x="${x + 35}" y="${Math.max(20, y - 10)}"
+                    text-anchor="middle"
+                    class="sf-chart-value">
+                    ${item.value}
+                </text>
+                <text x="${x + 35}" y="185"
+                    text-anchor="middle"
+                    class="sf-chart-label">
+                    ${chartLabels[index]}
+                </text>
+            `;
+        }).join("");
+
+        chart.innerHTML = `
+            <svg viewBox="0 0 760 215"
+            <defs>
+    <linearGradient id="sfGrowthGradient" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#38bdf8"/>
+        <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+</defs>
+                role="img"
+                aria-label="Comparison of your saved skills, completed learning steps, applications and interview records">
+
+                <line x1="35" y1="${chartBottom}"
+                    x2="725" y2="${chartBottom}"
+                    class="sf-chart-baseline"/>
+
+                ${bars}
+            </svg>
+        `;
+    }
+
+    async function loadGrowthAnalytics() {
+        if (isLoading) return;
+
+        isLoading = true;
+
+        if (refreshButton) {
+            refreshButton.disabled = true;
+            refreshButton.textContent = "↻ Loading...";
+        }
+
+        if (message) {
+            message.textContent = "Fetching your saved account data...";
+        }
+
+        try {
+            const savedUser = JSON.parse(
+                localStorage.getItem("skillforgeUser") || "null"
+            );
+
+            const token = localStorage.getItem("skillforgeToken");
+            const userId = savedUser?.id || savedUser?._id || savedUser?.userId;
+
+            if (!userId || !token) {
+                throw new Error("Please log in to view your personal analytics.");
+            }
+
+            const encodedUserId = encodeURIComponent(userId);
+
+            const requests = await Promise.allSettled([
+                fetchAnalyticsArray(
+                    `/api/users/${encodedUserId}/skills`,
+                    "skills"
+                ),
+                fetchAnalyticsArray(
+                    `/api/users/${encodedUserId}/learning-progress`,
+                    "learningProgress"
+                ),
+                fetchAnalyticsArray(
+                    `/api/users/${encodedUserId}/applications`,
+                    "applications"
+                ),
+                fetchAnalyticsArray(
+                    "/api/mock-interviews",
+                    "interviews"
+                )
+            ]);
+
+            const results = requests.map(result =>
+                result.status === "fulfilled" ? result.value : null
+            );
+
+            const [skills, learningProgress, applications, interviews] = results;
+
+            const completedLearning = learningProgress
+                ? learningProgress.filter(item =>
+                    String(item.status || "").toLowerCase() === "completed"
+                ).length
+                : null;
+
+            const values = {
+                skills: skills ? skills.length : null,
+                learning: completedLearning,
+                applications: applications ? applications.length : null,
+                interviews: interviews ? interviews.length : null
+            };
+
+            Object.entries(statElements).forEach(([key, element]) => {
+                if (element) {
+                    element.textContent =
+                        values[key] === null ? "—" : values[key];
+                }
+            });
+
+            renderGrowthChart([
+                { value: values.skills },
+                { value: values.learning },
+                { value: values.applications },
+                { value: values.interviews }
+            ]);
+
+            const failedSources = requests.filter(
+                result => result.status === "rejected"
+            ).length;
+
+            if (message) {
+                if (failedSources === 0) {
+                    message.textContent =
+                        "All analytics loaded successfully from your account data.";
+                } else {
+                    message.textContent =
+                        `${4 - failedSources} of 4 data sources loaded. Some information is temporarily unavailable.`;
+                }
+            }
+
+        } catch (error) {
+            console.error("Growth Analytics Error:", error);
+
+            Object.values(statElements).forEach(element => {
+                if (element) element.textContent = "—";
+            });
+
+            if (chart) {
+                chart.innerHTML =
+                    '<p class="sf-chart-loading">Growth data could not be loaded.</p>';
+            }
+
+            if (message) {
+                message.textContent = error.message;
+            }
+
+        } finally {
+            isLoading = false;
+
+            if (refreshButton) {
+                refreshButton.disabled = false;
+                refreshButton.textContent = "↻ Refresh Analytics";
+            }
+        }
+    }
+
+    if (refreshButton) {
+        refreshButton.addEventListener("click", loadGrowthAnalytics);
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", loadGrowthAnalytics);
+    } else {
+        loadGrowthAnalytics();
+    }
+})();

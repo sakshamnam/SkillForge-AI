@@ -1225,6 +1225,10 @@ document.getElementById("completeLessonBtn").addEventListener("click", async () 
 
         message.textContent = "✓ Lesson completed! Your progress has been saved.";
         button.textContent = "Completed ✓";
+        localStorage.setItem(
+    "skillforgeProgressUpdated",
+    Date.now().toString()
+);
     } catch (error) {
         console.error("Lesson completion error:", error);
         message.textContent = error.message || "Unable to save progress. Please try again.";

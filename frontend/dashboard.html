@@ -69,6 +69,9 @@
             <a href="#applicationTrackerSection" class="nav-item">
     📋 <span>Application Tracker</span>
 </a>
+<a href="#analyticsSection" class="nav-item">
+    📊 <span>Analytics & System Flow</span>
+</a>
         </nav>
 
         <div class="sidebar-bottom">
@@ -96,9 +99,10 @@
                     <span class="welcome-dot"></span>
                     STUDENT DASHBOARD
                 </div>
-
                 <h1>
-                    Welcome back, <span id="userName">Student</span> 👋
+                    Welcome back,
+                    <span id="userName">Student</span>&nbsp;
+                    <span class="welcome-wave">👋</span>
                 </h1>
 
                 <p class="dashboard-subtitle">
@@ -1273,6 +1277,141 @@
 <!-- END CAMERA VERIFICATION SECTION -->
 
         
+<!-- ================= ANALYTICS & SYSTEM FLOW ================= -->
+<section id="analyticsSection" class="sf-analytics-section">
+
+    <div class="sf-analytics-heading">
+        <div>
+            <p class="card-label">YOUR PERFORMANCE CENTER</p>
+            <h2>Analytics & System Flow</h2>
+            <p>Track your real progress and explore how SkillForge AI works.</p>
+        </div>
+        <button type="button" class="card-button" id="refreshAnalyticsBtn">
+            ↻ Refresh Analytics
+        </button>
+    </div>
+
+    <!-- REAL USER GROWTH -->
+    <div class="sf-analytics-card sf-growth-card">
+        <div class="sf-analytics-card-heading">
+            <div>
+                <p class="card-label">PERSONAL ANALYTICS</p>
+                <h3>My Growth Overview</h3>
+                <p>Your activity based on saved account data.</p>
+            </div>
+            <span class="sf-live-indicator">● DATABASE DATA</span>
+        </div>
+
+        <div class="sf-growth-stats">
+            <div class="sf-growth-stat">
+                <span>Skills</span>
+                <strong id="growthSkillsCount">—</strong>
+            </div>
+            <div class="sf-growth-stat">
+                <span>Learning</span>
+                <strong id="growthLearningCount">—</strong>
+            </div>
+            <div class="sf-growth-stat">
+                <span>Applications</span>
+                <strong id="growthApplicationsCount">—</strong>
+            </div>
+            <div class="sf-growth-stat">
+                <span>Interviews</span>
+                <strong id="growthInterviewsCount">—</strong>
+            </div>
+        </div>
+
+        <div class="sf-growth-chart-wrap">
+            <div class="sf-chart-title">
+                <strong>Activity Comparison</strong>
+                <span>Actual saved totals</span>
+            </div>
+            <div id="growthChart" class="sf-growth-chart">
+                <p class="sf-chart-loading">Loading your growth data...</p>
+            </div>
+        </div>
+
+        <p id="growthAnalyticsMessage" class="sf-analytics-message"
+           role="status">Connecting to your account...</p>
+    </div>
+
+    <!-- PROJECT WORKFLOW -->
+    <div class="sf-analytics-card sf-workflow-card">
+        <div class="sf-analytics-card-heading">
+            <div>
+                <p class="card-label">SYSTEM ARCHITECTURE</p>
+                <h3>How SkillForge AI Works</h3>
+                <p>Explore the flow between your application and its services.</p>
+            </div>
+            <span class="sf-flow-indicator">✦ ANIMATED FLOW</span>
+        </div>
+
+        <div class="sf-workflow-visual">
+            <svg viewBox="0 0 900 310"
+                 role="img"
+                 aria-label="SkillForge AI architecture flow from frontend to backend, authentication, database and Gemini AI">
+
+                <defs>
+                    <linearGradient id="sfFlowGradient" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stop-color="#8b5cf6"/>
+                        <stop offset="50%" stop-color="#38bdf8"/>
+                        <stop offset="100%" stop-color="#a78bfa"/>
+                    </linearGradient>
+                </defs>
+
+                <path class="sf-flow-path" d="M150 135 H750"/>
+                <path class="sf-flow-path sf-flow-path-secondary"
+                      d="M450 175 V245 H750 V175"/>
+
+                <circle class="sf-flow-particle" r="5">
+                    <animateMotion dur="4s" repeatCount="indefinite"
+                        path="M150 135 H750"/>
+                </circle>
+                <circle class="sf-flow-particle sf-flow-particle-two" r="5">
+                    <animateMotion dur="4s" repeatCount="indefinite"
+                        begin="1.5s" path="M150 135 H750"/>
+                </circle>
+
+                <g class="sf-flow-node">
+                    <rect x="40" y="95" width="150" height="80" rx="16"/>
+                    <text x="115" y="128" text-anchor="middle">Frontend</text>
+                    <text x="115" y="151" text-anchor="middle" class="sf-node-sub">HTML · CSS · JS</text>
+                </g>
+
+                <g class="sf-flow-node">
+                    <rect x="220" y="95" width="150" height="80" rx="16"/>
+                    <text x="295" y="128" text-anchor="middle">Backend</text>
+                    <text x="295" y="151" text-anchor="middle" class="sf-node-sub">Node · Express</text>
+                </g>
+
+                <g class="sf-flow-node">
+                    <rect x="400" y="95" width="150" height="80" rx="16"/>
+                    <text x="475" y="128" text-anchor="middle">Auth & API</text>
+                    <text x="475" y="151" text-anchor="middle" class="sf-node-sub">JWT · REST</text>
+                </g>
+
+                <g class="sf-flow-node">
+                    <rect x="580" y="95" width="150" height="80" rx="16"/>
+                    <text x="655" y="128" text-anchor="middle">MongoDB</text>
+                    <text x="655" y="151" text-anchor="middle" class="sf-node-sub">User Data</text>
+                </g>
+
+                <g class="sf-flow-node sf-flow-ai-node">
+                    <rect x="750" y="95" width="130" height="80" rx="16"/>
+                    <text x="815" y="128" text-anchor="middle">Gemini AI</text>
+                    <text x="815" y="151" text-anchor="middle" class="sf-node-sub">AI Services</text>
+                </g>
+            </svg>
+        </div>
+
+        <p class="sf-flow-note">
+            Animated architecture illustration — not a live network monitor.
+        </p>
+    </div>
+
+</section>
+<!-- ================= END ANALYTICS & SYSTEM FLOW ================= -->
+
 
 <!-- SETTINGS SECTION -->
 <section id="settingsSection" class="dashboard-card settings-section" hidden>
