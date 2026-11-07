@@ -1,4 +1,4 @@
-﻿
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | SkillForge AI</title>
     <link rel="stylesheet" href="style.css">
+    <script src="config.js"></script>
 </head>
 
 <body>
@@ -27,9 +28,8 @@
         localStorage.removeItem("skillforgeToken");
         localStorage.removeItem("skillforgeUser");
 
-        window.location.replace(
-            "http://localhost:5500/SkillForge-AI/frontend/login.html"
-        );
+        const loginPage = (window.SKILLFORGE_CONFIG && window.SKILLFORGE_CONFIG.LOGIN_PAGE) || "login.html";
+        window.location.replace(loginPage);
     }
 })();
 </script>
@@ -1513,7 +1513,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         return;
     }
 
-    const API_URL = "https://skillforge-api-45.onrender.com/api/opportunities";
+    const API_BASE = (window.SKILLFORGE_CONFIG && window.SKILLFORGE_CONFIG.API_URL) || "https://skillforge-api-45.onrender.com";
+    const API_URL = `${API_BASE}/api/opportunities`;
 
     list.innerHTML = "<p>Loading opportunities...</p>";
 

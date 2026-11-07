@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SkillForge-AI | Learning Lesson</title>
+    <script src="config.js"></script>
     <style>
         body {
             margin: 0;
@@ -1201,8 +1202,9 @@ document.getElementById("completeLessonBtn").addEventListener("click", async () 
     message.textContent = "Saving your learning progress...";
 
     try {
+        const apiBase = (window.SKILLFORGE_CONFIG && window.SKILLFORGE_CONFIG.API_URL) || "https://skillforge-api-45.onrender.com";
         const response = await fetch(
-            `https://skillforge-api-45.onrender.com/api/users/${encodeURIComponent(userId)}/learning-progress`,
+            `${apiBase}/api/users/${encodeURIComponent(userId)}/learning-progress`,
             {
                 method: "PUT",
                 headers: {

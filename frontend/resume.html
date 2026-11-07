@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SkillForge AI | Resume Builder</title>
+    <script src="config.js"></script>
 
     <style>
         * { box-sizing: border-box; }
@@ -230,7 +231,7 @@
 <script>
 "use strict";
 
-const API_URL = "https://skillforge-api-45.onrender.com";
+const API_URL = (window.SKILLFORGE_CONFIG && window.SKILLFORGE_CONFIG.API_URL) || "https://skillforge-api-45.onrender.com";
 
 const fields = [
     "fullName", "email", "phone", "career",
@@ -526,7 +527,7 @@ async function analyzeResume() {
 
         if (error instanceof TypeError) {
             errorBox.textContent =
-                "Could not connect to the backend. Check that SkillForge AI server is running at https://skillforge-api-45.onrender.com.";
+                `Could not connect to the backend. Check that SkillForge AI server is running at ${API_URL}.`;
         } else {
             errorBox.textContent = `AI analysis failed: ${error.message}`;
         }

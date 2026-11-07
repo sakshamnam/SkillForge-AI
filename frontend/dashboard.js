@@ -75,8 +75,9 @@ function initAIAssistant() {
         try {
             console.log("[Career AI] Sending question to backend");
 
+            const apiBase = (window.SKILLFORGE_CONFIG && window.SKILLFORGE_CONFIG.API_URL) || "https://skillforge-api-45.onrender.com";
             const response = await fetch(
-                "https://skillforge-api-45.onrender.com/api/ai-assistant",
+                `${apiBase}/api/ai-assistant`,
                 {
                     method: "POST",
                     headers: {
@@ -168,8 +169,9 @@ const runSkillAnalysis = async () => {
 
         try {
 
+            const apiBase = (window.SKILLFORGE_CONFIG && window.SKILLFORGE_CONFIG.API_URL) || "https://skillforge-api-45.onrender.com";
             const response = await fetch(
-                "https://skillforge-api-45.onrender.com/api/analyze-skills",
+                `${apiBase}/api/analyze-skills`,
                 {
                     method: "POST",
 
@@ -308,7 +310,6 @@ if (gapList) {
 
            window.currentMissingSkills = data.missingSkills;
 window.currentCareerGoal = data.careerGoal;
-generatePersonalizedRoadmap(data.missingSkills, data.careerGoal);
         } catch (error) {
 
             console.error(error);
@@ -336,8 +337,9 @@ async function generatePersonalizedRoadmap(missingSkills, careerGoal) {
 
     try {
 
+        const apiBase = (window.SKILLFORGE_CONFIG && window.SKILLFORGE_CONFIG.API_URL) || "https://skillforge-api-45.onrender.com";
         const response = await fetch(
-            "https://skillforge-api-45.onrender.com/api/learning-roadmap",
+            `${apiBase}/api/learning-roadmap`,
             {
                 method: "POST",
 
@@ -424,7 +426,7 @@ roadmapBox.innerHTML = `
 // ================= ROADMAP PROGRESS TRACKING =================
 // ================= ROADMAP PROGRESS - MONGODB =================
 
-const ROADMAP_API_URL = "https://skillforge-api-45.onrender.com";
+const ROADMAP_API_URL = (window.SKILLFORGE_CONFIG && window.SKILLFORGE_CONFIG.API_URL) || "https://skillforge-api-45.onrender.com";
 
 function getRoadmapUser() {
     try {
@@ -690,8 +692,9 @@ async function loadCareerProfile() {
             headers.Authorization = `Bearer ${token}`;
         }
 
+        const apiBase = (window.SKILLFORGE_CONFIG && window.SKILLFORGE_CONFIG.API_URL) || "https://skillforge-api-45.onrender.com";
         const response = await fetch(
-            "https://skillforge-api-45.onrender.com/api/career-profile",
+            `${apiBase}/api/career-profile`,
             {
                 method: "POST",
                 headers,
@@ -895,7 +898,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    const API_URL = "https://skillforge-api-45.onrender.com";
+    const API_URL = (window.SKILLFORGE_CONFIG && window.SKILLFORGE_CONFIG.API_URL) || "https://skillforge-api-45.onrender.com";
 
     const savedUser = localStorage.getItem("skillforgeUser");
 
@@ -1509,7 +1512,7 @@ function updateDashboardStats() {
 /* ================= MY PROFILE ================= */
 
 document.addEventListener("DOMContentLoaded", () => {
-    const API_URL = "https://skillforge-api-45.onrender.com";
+    const API_URL = (window.SKILLFORGE_CONFIG && window.SKILLFORGE_CONFIG.API_URL) || "https://skillforge-api-45.onrender.com";
 
     const getSavedUser = () => {
         try {
@@ -2182,8 +2185,9 @@ saveButton.addEventListener("click", async () => {
                 const formData = new FormData();
                 formData.append("photo", blob, "profile-photo.jpg");
 
+                const apiBase = (window.SKILLFORGE_CONFIG && window.SKILLFORGE_CONFIG.API_URL) || "https://skillforge-api-45.onrender.com";
                 const response = await fetch(
-                    `https://skillforge-api-45.onrender.com/api/users/${userId}/profile/photo`,
+                    `${apiBase}/api/users/${userId}/profile/photo`,
                     {
                         method: "POST",
                         headers: {
@@ -2266,8 +2270,9 @@ deletePhotoButton.addEventListener("click", async () => {
     deletePhotoMessage.textContent = "Deleting photo...";
 
     try {
+        const apiBase = (window.SKILLFORGE_CONFIG && window.SKILLFORGE_CONFIG.API_URL) || "https://skillforge-api-45.onrender.com";
         const response = await fetch(
-            `https://skillforge-api-45.onrender.com/api/users/${userId}/profile/photo`,
+            `${apiBase}/api/users/${userId}/profile/photo`,
             {
                 method: "DELETE",
                 headers: {
@@ -2368,7 +2373,7 @@ deletePhotoButton.addEventListener("click", async () => {
  // ================= PERSONALIZED OPPORTUNITIES =================
 
 document.addEventListener("DOMContentLoaded", () => {
-    const API_URL = "https://skillforge-api-45.onrender.com";
+    const API_URL = (window.SKILLFORGE_CONFIG && window.SKILLFORGE_CONFIG.API_URL) || "https://skillforge-api-45.onrender.com";
 
     let user = {};
 
@@ -2465,7 +2470,7 @@ document.addEventListener("DOMContentLoaded", () => {
  // ================= APPLICATION TRACKER =================
 
 document.addEventListener("DOMContentLoaded", () => {
-    const API_URL = "https://skillforge-api-45.onrender.com";
+    const API_URL = (window.SKILLFORGE_CONFIG && window.SKILLFORGE_CONFIG.API_URL) || "https://skillforge-api-45.onrender.com";
 
     const form = document.getElementById("applicationForm");
     const list = document.getElementById("applicationList");
@@ -2890,7 +2895,8 @@ if (rejectedStat) {
     // Prevent errors if this section is not present on another page.
     if (!form || !workspace || !message || !historyContainer) return;
 
-    const API = "https://skillforge-api-45.onrender.com/api/mock-interviews";
+    const API_BASE = (window.SKILLFORGE_CONFIG && window.SKILLFORGE_CONFIG.API_URL) || "https://skillforge-api-45.onrender.com";
+    const API = `${API_BASE}/api/mock-interviews`;
 
     let currentInterview = null;
     let currentIndex = 0;
@@ -3406,7 +3412,7 @@ if (rejectedStat) {
 ========================================== */
 
 (() => {
-    const API_URL = "https://skillforge-api-45.onrender.com";
+    const API_URL = (window.SKILLFORGE_CONFIG && window.SKILLFORGE_CONFIG.API_URL) || "https://skillforge-api-45.onrender.com";
     const list = document.querySelector("#opportunitiesSection .opportunity-list");
 
     if (!list) return;
@@ -3588,7 +3594,7 @@ refreshSaveButtons();
 ========================================== */
 
 (() => {
-    const API_URL = "https://skillforge-api-45.onrender.com";
+    const API_URL = (window.SKILLFORGE_CONFIG && window.SKILLFORGE_CONFIG.API_URL) || "https://skillforge-api-45.onrender.com";
     const list = document.querySelector(
         "#opportunitiesSection .opportunity-list"
     );
@@ -3721,7 +3727,8 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.removeItem("skillforgeToken");
         localStorage.removeItem("skillforgeUser");
 alert("Logout successful. Redirecting to login...");
-        window.location.href = "http://localhost:5500/SkillForge-AI/frontend/login.html";
+        const loginPage = (window.SKILLFORGE_CONFIG && window.SKILLFORGE_CONFIG.LOGIN_PAGE) || "login.html";
+        window.location.href = loginPage;
     });
 });
 
@@ -3771,7 +3778,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const chart = document.getElementById("growthChart");
     const message = document.getElementById("growthAnalyticsMessage");
 
-    const API_BASE = "https://skillforge-api-45.onrender.com";
+    const API_BASE = (window.SKILLFORGE_CONFIG && window.SKILLFORGE_CONFIG.API_URL) || "https://skillforge-api-45.onrender.com";
 
     const statElements = {
         skills: document.getElementById("growthSkillsCount"),
