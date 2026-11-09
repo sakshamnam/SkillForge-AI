@@ -54,10 +54,9 @@ It brings multiple career-building tools together in one platform, helping users
 
 <div align="center">
 
-<img src="./screenshots/dashboard.png.png" width="100%" alt="SkillForge-AI Dashboard"/>
+<img src="./dashboard.png.png" width="100%" alt="SkillForge-AI Dashboard"/>
 
 </div>
-
 
 
 ## ⚙️ Getting Started
