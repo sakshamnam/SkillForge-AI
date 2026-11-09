@@ -3,6 +3,17 @@
 <div align="center">
 
 ### Your AI-Powered Career Development Platform
+<div align="center">
+
+<a href="https://skillforge-ai-frontend-ruddy.vercel.app/login.html">
+  <img src="https://img.shields.io/badge/🚀_LIVE_DEMO-Visit_Website-8b5cf6?style=for-the-badge&labelColor=090014" />
+</a>
+
+<a href="https://github.com/sakshamnam/SkillForge-AI">
+  <img src="https://img.shields.io/badge/GITHUB-Source_Code-181717?style=for-the-badge&logo=github" />
+</a>
+
+</div>
 
 **Learn Smarter. Build Skills. Prepare for Your Future.**
 
