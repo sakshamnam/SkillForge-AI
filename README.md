@@ -50,11 +50,15 @@ It brings multiple career-building tools together in one platform, helping users
 
 ## 📸 Project Preview
 
+
+
 <div align="center">
 
-*Screenshots coming soon.*
+<img src="./screenshots/dashboard.png" width="100%" alt="SkillForge-AI Dashboard"/>
 
 </div>
+
+
 
 ## ⚙️ Getting Started
 
