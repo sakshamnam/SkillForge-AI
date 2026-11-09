@@ -3,22 +3,17 @@
 <div align="center">
 
 ### Your AI-Powered Career Development Platform
-<div align="center">
+
+**Learn Smarter. Build Skills. Prepare for Your Future.**
 
 <a href="https://skillforge-ai-frontend-ruddy.vercel.app/login.html">
   <img src="https://img.shields.io/badge/🚀_LIVE_DEMO-Visit_Website-8b5cf6?style=for-the-badge&labelColor=090014" />
 </a>
-
 <a href="https://github.com/sakshamnam/SkillForge-AI">
   <img src="https://img.shields.io/badge/GITHUB-Source_Code-181717?style=for-the-badge&logo=github" />
 </a>
 
-</div>
-
-**Learn Smarter. Build Skills. Prepare for Your Future.**
-
-[![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/sakshamnam/SkillForge-AI)
-![Status](https://img.shields.io/badge/Status-Active%20Development-8b5cf6?style=for-the-badge)
+<img src="https://img.shields.io/badge/Status-Active%20Development-8b5cf6?style=for-the-badge" />
 
 </div>
 
@@ -28,22 +23,39 @@
 
 **SkillForge-AI** is an AI-powered career development platform designed to help students improve their skills, explore career opportunities, and prepare for the professional world.
 
-It brings multiple career-building tools together in one platform, helping users track their learning journey and prepare for future opportunities.
+It combines career guidance, skill analysis, interview practice, and portfolio-building tools in one platform.
 
 ## ✨ Key Features
 
-- 🤖 **AI Assistant** – Get AI-powered career and learning guidance.
-- 📊 **Skill Gap Analyzer** – Identify matching and missing skills for your career goals.
-- 🗺️ **Learning Roadmap** – Follow a structured learning journey.
-- 💼 **Career Opportunities** – Explore and save relevant opportunities.
-- 🎤 **Mock Interview** – Practice interviews and review your performance.
-- 📄 **Resume Builder** – Create your professional resume.
-- 🌐 **Portfolio Studio** – Generate and preview your portfolio.
-- 📌 **Application Tracker** – Track your job and internship applications.
-- 👤 **User Authentication** – Register and securely manage your account.
-- ☁️ **Cloud Integration** – Store supported user data and media.
+| Feature | Description |
+|---|---|
+| 🤖 AI Assistant | AI-powered career and learning guidance |
+| 📊 Skill Gap Analyzer | Identify matching and missing skills |
+| 🗺️ Learning Roadmap | Follow a structured learning journey |
+| 💼 Career Opportunities | Explore and save opportunities |
+| 🎤 Mock Interview | Practice interviews and evaluate performance |
+| 📄 Resume Builder | Build a professional resume |
+| 🌐 Portfolio Studio | Generate and preview portfolios |
+| 📌 Application Tracker | Track applications |
+| 👤 Authentication | Register and manage your account |
+
+## 📸 Project Preview
+
+<div align="center">
+
+<img src="./dashboard.png.png" width="100%" alt="SkillForge-AI Dashboard"/>
+
+<sub>SkillForge-AI — Dashboard Preview</sub>
+
+</div>
 
 ## 🛠️ Tech Stack
+
+<div align="center">
+
+<img src="https://skillicons.dev/icons?i=html,css,js,nodejs,express,mongodb,git,github&theme=dark" />
+
+</div>
 
 | Technology | Purpose |
 |---|---|
@@ -57,18 +69,6 @@ It brings multiple career-building tools together in one platform, helping users
 | Google Gemini API | AI-powered features |
 | Cloudinary | Media storage |
 | JWT | Authentication |
-| Git & GitHub | Version control |
-
-## 📸 Project Preview
-
-
-
-<div align="center">
-
-<img src="./dashboard.png.png" width="100%" alt="SkillForge-AI Dashboard"/>
-
-</div>
-
 
 ## ⚙️ Getting Started
 
@@ -77,7 +77,7 @@ It brings multiple career-building tools together in one platform, helping users
 - Node.js and npm
 - MongoDB connection
 - Google Gemini API key
-- Cloudinary account for media features
+- Cloudinary credentials for media features
 
 ### Installation
 
@@ -87,7 +87,7 @@ It brings multiple career-building tools together in one platform, helping users
 git clone https://github.com/sakshamnam/SkillForge-AI.git
 ```
 
-**2. Open the project folder**
+**2. Navigate to the project**
 
 ```bash
 cd SkillForge-AI
@@ -102,9 +102,9 @@ npm install
 
 **4. Configure environment variables**
 
-Create a `.env` file inside the `backend` folder and configure the required credentials according to the backend configuration.
+Create a `.env` file inside the `backend` folder and add the required configuration values.
 
-**Never commit your `.env` file or API secrets to GitHub.**
+Never upload API keys, passwords, or `.env` files to GitHub.
 
 **5. Start the backend**
 
@@ -116,29 +116,33 @@ npm start
 
 Open the frontend using a local development server such as VS Code Live Server.
 
-## 🎯 Project Goal
+## 🎯 Project Vision
 
-The goal of SkillForge-AI is to make career preparation more organized, accessible, and practical by combining AI assistance, skill development, interview practice, and career tracking.
+To make career preparation more organized and accessible by bringing AI assistance, skill development, interview practice, and career tracking together.
 
 ## 🚧 Future Improvements
 
-- More personalized AI learning recommendations
-- Enhanced analytics and progress tracking
+- More personalized AI recommendations
+- Enhanced progress analytics
 - Improved mobile responsiveness
 - Additional career preparation tools
 
 ## 👨‍💻 Developer
 
-**Saksham Namdeo**
+<div align="center">
 
-CSE Student | Aspiring Full Stack Developer
+### Saksham Namdeo
 
-- GitHub: [@sakshamnam](https://github.com/sakshamnam)
-- LinkedIn: [Connect with me](https://www.linkedin.com/in/saksham-namdeo-9639013b7/)
+**CSE Student | Aspiring Full Stack Developer**
+
+<a href="https://github.com/sakshamnam">
+  <img src="https://img.shields.io/badge/GitHub-Follow-181717?style=for-the-badge&logo=github" />
+</a>
+<a href="https://www.linkedin.com/in/saksham-namdeo-9639013b7/">
+  <img src="https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin" />
+</a>
 
 ---
-
-<div align="center">
 
 ### 💜 Built with passion, curiosity, and a vision to learn.
 
