@@ -38,6 +38,23 @@ const opportunitySchema = new mongoose.Schema(
             type: String,
             required: true
         },
+        // SKILLFORGE_RESUME_COMPANY_MATCHES_V1
+        requiredSkills: {
+            type: [String],
+            default: []
+        },
+        eligibility: {
+            type: String,
+            default: ""
+        },
+        location: {
+            type: String,
+            default: ""
+        },
+        closingDate: {
+            type: Date,
+            default: null
+        },
         isActive: {
             type: Boolean,
             default: true

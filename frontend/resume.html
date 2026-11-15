@@ -140,6 +140,78 @@
             overflow-wrap: anywhere;
         }
 
+        /* SKILLFORGE_RESUME_COMPANY_MATCHES_V1 */
+        .company-matches-panel {
+            margin-top: 24px;
+            padding: 22px;
+            border: 1px solid #59428a;
+            border-radius: 12px;
+            background: linear-gradient(145deg, #1d1731, #151124);
+        }
+
+        .company-matches-panel p {
+            color: #c4bdd8;
+            line-height: 1.6;
+        }
+
+        #resumeMatchesStatus {
+            margin-top: 14px;
+            overflow-wrap: anywhere;
+        }
+
+        .company-match-card {
+            margin-top: 14px;
+            padding: 16px;
+            border: 1px solid #49396b;
+            border-radius: 10px;
+            background: #100e1c;
+            overflow-wrap: anywhere;
+        }
+
+        .company-match-card h4 {
+            margin: 0 0 6px;
+            color: #d6c8ff;
+            font-size: 17px;
+        }
+
+        .company-match-meta {
+            color: #bcb2d2;
+            font-size: 13px;
+        }
+
+        .match-score {
+            display: inline-block;
+            margin: 8px 0;
+            padding: 5px 9px;
+            border: 1px solid #7658bd;
+            border-radius: 20px;
+            color: #e2d7ff;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .match-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .match-actions a {
+            color: #cbb8ff;
+            text-decoration: underline;
+            overflow-wrap: anywhere;
+        }
+
+        .match-actions button {
+            margin-top: 0;
+        }
+
+        .match-actions button:disabled {
+            cursor: not-allowed;
+        }
+
         @media (max-width: 750px) {
             .container { grid-template-columns: 1fr; padding: 18px; }
             header { padding: 18px; flex-wrap: wrap; }
@@ -224,6 +296,36 @@
 
             <button type="button" id="analyzeResumeButton">Analyze Resume Match</button>
             <div id="resumeTailoringResults" aria-live="polite"></div>
+        </div>
+
+        <!-- SKILLFORGE_RESUME_COMPANY_MATCHES_V1: Resume Builder company matching -->
+        <div class="company-matches-panel" id="resumeCompanyMatches">
+            <h3>🏢 Company & Internship Matches</h3>
+
+            <p>
+                Find company-specific opportunities using the
+                skills in your saved resume.
+            </p>
+
+            <button
+                type="button"
+                id="findCompanyMatchesButton"
+            >
+                Find Matching Companies
+            </button>
+
+            <p
+                id="resumeMatchesStatus"
+                class="status-message"
+                aria-live="polite"
+            >
+                Save your resume, then find matching company listings.
+            </p>
+
+            <div
+                id="resumeMatchesResults"
+                aria-live="polite"
+            ></div>
         </div>
     </section>
 </div>
@@ -346,6 +448,7 @@ async function saveResume() {
         }
 
         alert("Resume successfully saved!");
+        await loadMatchingCompanies();
     } catch (error) {
         console.error("[Resume] Save error:", error);
         alert(`Resume save failed: ${error.message}`);
@@ -360,6 +463,278 @@ function clearResume() {
 
     fields.forEach(id => { $(id).value = ""; });
     updatePreview();
+}
+
+// SKILLFORGE_RESUME_COMPANY_MATCHES_V1
+
+let companyMatchesLoading = false;
+
+function makeMatchText(tagName, className, value) {
+    const element = document.createElement(tagName);
+
+    if (className) {
+        element.className = className;
+    }
+
+    element.textContent =
+        value == null ? "" : String(value);
+
+    return element;
+}
+
+
+function createCompanyMatchCard(job) {
+    const card = document.createElement("article");
+    card.className = "company-match-card";
+
+    card.appendChild(makeMatchText("h4", "", job.title || "Internship"));
+
+    card.appendChild(
+        makeMatchText(
+            "p",
+            "company-match-meta",
+            [job.company, job.type, job.location]
+                .filter(Boolean)
+                .join(" • ")
+        )
+    );
+
+    card.appendChild(
+        makeMatchText(
+            "span",
+            "match-score",
+            job.relevanceLabel || "Company internship listing"
+        )
+    );
+
+    if (job.matchedSkills && job.matchedSkills.length) {
+        card.appendChild(
+            makeMatchText(
+                "p",
+                "",
+                "Related resume keywords: " + job.matchedSkills.join(", ")
+            )
+        );
+    }
+
+    card.appendChild(
+        makeMatchText(
+            "p",
+            "",
+            "Eligibility (tracker-reported; verify officially): " +
+            (job.eligibility || "Not specified.")
+        )
+    );
+
+    if (job.datePosted) {
+        card.appendChild(
+            makeMatchText("p", "", "Date posted: " + job.datePosted)
+        );
+    }
+
+    if (job.lastChecked) {
+        card.appendChild(
+            makeMatchText("p", "", "Tracker last checked: " + job.lastChecked)
+        );
+    }
+
+    if (job.description) {
+        card.appendChild(makeMatchText("p", "", job.description));
+    }
+
+    const actions = document.createElement("div");
+    actions.className = "match-actions";
+
+    const listingLink = document.createElement("a");
+    listingLink.href = job.link;
+    listingLink.target = "_blank";
+    listingLink.rel = "noopener noreferrer";
+    listingLink.textContent = "View Official Listing";
+
+    actions.appendChild(listingLink);
+
+    const trackButton = document.createElement("button");
+    trackButton.type = "button";
+    trackButton.textContent = "Apply & Track";
+
+    trackButton.addEventListener(
+        "click",
+        () => trackCompanyMatch(job, trackButton)
+    );
+
+    actions.appendChild(trackButton);
+    card.appendChild(actions);
+
+    return card;
+}
+
+async function trackCompanyMatch(job, button) {
+    const session = getUserAndToken();
+
+    if (!session) return;
+
+    const applicationTab =
+        window.open("about:blank", "_blank");
+
+    if (applicationTab) {
+        applicationTab.opener = null;
+    }
+
+    button.disabled = true;
+    button.textContent = "Adding to Tracker...";
+
+    try {
+        const response = await fetch(
+            `${API_URL}/api/users/${encodeURIComponent(session.user.id)}/applications`,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${session.token}`
+                },
+
+                body: JSON.stringify({
+                    company: job.company,
+                    role: job.title,
+                    link: job.link,
+                    status: "Applied"
+                })
+            }
+        );
+
+        const data = await response.json().catch(
+            () => ({})
+        );
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.message ||
+                `Could not update Application Tracker (HTTP ${response.status}).`
+            );
+        }
+
+        button.textContent = "Added to Tracker";
+
+        if (applicationTab) {
+            applicationTab.location.href = job.link;
+        } else {
+            alert(
+                "Added to Application Tracker. " +
+                "Your browser blocked the new tab. " +
+                "Use View Official Listing to open the employer page."
+            );
+        }
+
+    } catch (error) {
+        if (applicationTab && !applicationTab.closed) {
+            applicationTab.close();
+        }
+
+        console.error(
+            "Resume match tracking error:",
+            error
+        );
+
+        button.disabled = false;
+        button.textContent = "Apply & Track";
+
+        alert(
+            error.message ||
+            "Could not add this opportunity to your tracker."
+        );
+    }
+}
+
+async function loadMatchingCompanies() {
+    const button = $("findCompanyMatchesButton");
+    const status = $("resumeMatchesStatus");
+    const results = $("resumeMatchesResults");
+
+    if (companyMatchesLoading) return;
+
+    const session = getUserAndToken(false);
+
+    if (!session) {
+        status.textContent =
+            "Please log in to find matches from your saved resume.";
+
+        results.replaceChildren();
+        return;
+    }
+
+    if (!$("skills").value.trim()) {
+        status.textContent =
+            "Add your skills to the resume and save it before searching.";
+
+        results.replaceChildren();
+        return;
+    }
+
+    companyMatchesLoading = true;
+    button.disabled = true;
+    button.textContent = "Finding Matches...";
+
+    status.textContent =
+        "Loading live company internships and checking role/category relevance...";
+
+    results.replaceChildren();
+
+    try {
+        const response = await fetch(
+          `${API_URL}/api/resume-opportunities`,
+{
+    method: "GET",
+    cache: "no-store",
+                headers: {
+                    Authorization: `Bearer ${session.token}`
+                }
+            }
+        );
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.message ||
+                `Could not load matches (HTTP ${response.status}).`
+            );
+        }
+
+        const matches = Array.isArray(data.matches)
+            ? data.matches
+            : [];
+
+        if (!matches.length) {
+            status.textContent =
+                "No open company listings are available from the live tracker right now.";
+
+            return;
+        }
+
+        matches.forEach(job => {
+            results.appendChild(
+                createCompanyMatchCard(job)
+            );
+        });
+
+        status.textContent =
+            `Found ${matches.length} open company internships. Ranked by resume keyword relevance; verify requirements on official pages.`;
+
+    } catch (error) {
+        console.error(
+            "Resume company matching error:",
+            error
+        );
+
+        status.textContent =
+            `Could not load company matches: ${error.message}`;
+
+    } finally {
+        companyMatchesLoading = false;
+        button.disabled = false;
+        button.textContent = "Refresh Company Matches";
+    }
 }
 
 function renderAnalysis(text, results) {
@@ -549,9 +924,15 @@ $("saveResumeButton").addEventListener("click", saveResume);
 $("downloadResumeButton").addEventListener("click", () => window.print());
 $("clearResumeButton").addEventListener("click", clearResume);
 $("analyzeResumeButton").addEventListener("click", analyzeResume);
+$("findCompanyMatchesButton").addEventListener("click", loadMatchingCompanies);
 
 updatePreview();
-loadResume();
+
+loadResume().then(() => {
+    if ($("skills").value.trim()) {
+        loadMatchingCompanies();
+    }
+});
 </script>
 </body>
 </html>

@@ -2780,6 +2780,215 @@ app.delete(
 
 
 
+
+/* SKILLFORGE_RESUME_COMPANY_MATCHES_V1 */
+
+// Live public India tech internship feed.
+// This community tracker is unofficial; always verify the employer page.
+
+let skillForgeListingCache = null;
+let skillForgeListingCacheAt = 0;
+
+const SKILLFORGE_LISTING_URL =
+    "https://raw.githubusercontent.com/Sarthzk/internship-tracker/main/data/listings.json";
+
+const SKILLFORGE_CATEGORY_LABELS = {
+    data_ml: "Data & Machine Learning",
+    hardware: "Hardware",
+    swe: "Software Engineering",
+    product: "Product",
+    quant: "Quantitative",
+    core: "Core Engineering",
+    other: "Other"
+};
+
+const SKILLFORGE_CATEGORY_HINTS = {
+    swe: ["software", "developer", "programming", "web", "frontend", "backend", "full stack"],
+    data_ml: ["data", "machine learning", "artificial intelligence", "analytics"],
+    hardware: ["hardware", "silicon", "embedded", "electronics"],
+    product: ["product", "business analyst"],
+    quant: ["quant", "quantitative", "trading"],
+    core: ["mechanical", "civil", "chemical", "electrical"]
+};
+
+app.get(
+    "/api/resume-opportunities",
+    authenticateToken,
+    async (req, res) => {
+        try {
+            const user = await User.findById(req.userId)
+                .select("resume.skills")
+                .lean();
+
+            if (!user) {
+                return res.status(404).json({
+                    success: false,
+                    message: "User account was not found."
+                });
+            }
+
+            const userSkills = String(user.resume?.skills || "")
+                .split(/[,;|\n]+/)
+                .map(skill => skill.trim().toLowerCase())
+                .filter(Boolean);
+
+            if (!userSkills.length) {
+                return res.json({
+                    success: true,
+                    count: 0,
+                    matches: [],
+                    message: "Add skills to your saved resume first."
+                });
+            }
+
+            // Cache feed for 10 minutes to avoid repeated external requests.
+            if (
+                !skillForgeListingCache ||
+                Date.now() - skillForgeListingCacheAt > 10 * 60 * 1000
+            ) {
+                const response = await fetch(SKILLFORGE_LISTING_URL, {
+                    signal: AbortSignal.timeout(12000)
+                });
+
+                if (!response.ok) {
+                    throw new Error("Internship feed returned HTTP " + response.status);
+                }
+
+                const feed = await response.json();
+
+                if (!Array.isArray(feed)) {
+                    throw new Error("Internship feed format was unexpected.");
+                }
+
+                skillForgeListingCache = feed;
+                skillForgeListingCacheAt = Date.now();
+            }
+
+            const matches = skillForgeListingCache
+                .filter(job => {
+                    if (job.status !== "open" || job.closed_at) return false;
+
+                    try {
+                        return new URL(job.url).protocol === "https:";
+                    } catch {
+                        return false;
+                    }
+                })
+                .map(job => {
+                    const category = String(job.category || "other").toLowerCase();
+                    const categoryHints = SKILLFORGE_CATEGORY_HINTS[category] || [];
+
+                    const searchableText = [
+                        job.title || "",
+                        category,
+                        SKILLFORGE_CATEGORY_LABELS[category] || "",
+                        ...categoryHints
+                    ].join(" ").toLowerCase();
+
+                    const matchedSkills = userSkills.filter(skill =>
+                        searchableText.includes(skill)
+                    );
+
+                    const enrichment = job.enrichment || {};
+                    const locations = Array.isArray(job.locations)
+                        ? job.locations
+                        : [];
+
+                    const eligibilityParts = [];
+
+                    if (enrichment.degree) {
+                        eligibilityParts.push("Degree: " + enrichment.degree);
+                    }
+
+                    if (
+                        Array.isArray(enrichment.eligible_batches) &&
+                        enrichment.eligible_batches.length
+                    ) {
+                        eligibilityParts.push(
+                            "Eligible batches (tracker-reported): " +
+                            enrichment.eligible_batches.join(", ")
+                        );
+                    }
+
+                    if (enrichment.duration_months) {
+                        eligibilityParts.push(
+                            "Duration: " + enrichment.duration_months + " months"
+                        );
+                    }
+
+                    if (enrichment.term) {
+                        eligibilityParts.push("Term: " + enrichment.term);
+                    }
+
+                    if (/\bph\.?d\b/i.test(job.title || "")) {
+                        eligibilityParts.unshift(
+                            "IMPORTANT: Role title mentions PhD. Check official eligibility."
+                        );
+                    }
+
+                    return {
+                        id: String(job.id || job.external_id || ""),
+                        title: String(job.title || "Internship"),
+                        company: String(job.company || "Company not specified"),
+                        category,
+                        type: "Internship",
+                        location: locations.join(" • ") ||
+                            (job.is_remote ? "Remote" : "Location not specified"),
+                        link: job.url,
+                        description:
+                            "Live listing from a community-maintained internship tracker. " +
+                            "Verify availability and requirements on the official company page.",
+                        requiredSkills: [],
+                        matchedSkills,
+                        missingSkills: [],
+                        matchPercentage: null,
+                        relevanceLabel: matchedSkills.length
+                            ? "Role/category relevance: " +
+                              matchedSkills.join(", ")
+                            : "Explore this role based on its category.",
+                        eligibility: eligibilityParts.length
+                            ? eligibilityParts.join(" | ")
+                            : "Not provided by tracker. Check official company listing.",
+                        closingDate: job.closed_at || null,
+                        datePosted: job.date_posted || null,
+                        lastChecked: job.last_seen || null,
+                        isRemote: Boolean(job.is_remote),
+                        source: "India Tech Internships Tracker"
+                    };
+                })
+                .sort((a, b) => {
+                    if (b.matchedSkills.length !== a.matchedSkills.length) {
+                        return b.matchedSkills.length - a.matchedSkills.length;
+                    }
+
+                    return String(b.datePosted || "")
+                        .localeCompare(String(a.datePosted || ""));
+                });
+
+            return res.json({
+                success: true,
+                count: matches.length,
+                matches,
+                source: "India Tech Internships Tracker",
+                sourceUrl: "https://github.com/Sarthzk/internship-tracker",
+                note:
+                    "Role relevance is based on title/category keywords, not verified required skills. " +
+                    "Confirm eligibility and vacancy status on the official employer page."
+            });
+
+        } catch (error) {
+            console.error("Resume opportunity feed error:", error);
+
+            return res.status(502).json({
+                success: false,
+                message:
+                    "Could not load live company listings. Please try again shortly."
+            });
+        }
+    }
+);
+
+
 /* ================= OPPORTUNITIES API ================= */
 
 // Get active opportunities
